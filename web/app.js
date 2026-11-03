@@ -23,6 +23,36 @@
     return 'Island weather';
   }
   function qr(url) { return 'https://api.qrserver.com/v1/create-qr-code/?size=320x320&color=111111&bgcolor=f1e5d0&margin=10&data=' + encodeURIComponent(url); }
+  // ---------- live streams ----------
+  function streamHtml(s, muted) {
+    if (s.type === 'hls') return '<video class="stream" autoplay playsinline' + (muted ? ' muted' : '') + ' src="' + esc(s.url) + '"></video>';
+    return '<iframe class="stream" frameborder="0" allow="autoplay; encrypted-media" src="https://www.youtube.com/embed/live_stream?channel=' +
+      encodeURIComponent(s.channel) + '&autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3' + (muted ? '&mute=1' : '') + '"></iframe>';
+  }
+  // Puts the first working stream into el; a direct stream that fails falls back to the next one.
+  function playInto(el, ch, muted) {
+    if (!el || !ch || !ch.streams || !ch.streams.length) return false;
+    var i = 0;
+    function attempt() {
+      if (i >= ch.streams.length) { el.innerHTML = '<span class="stream-msg">This channel isn’t available right now.</span>'; return; }
+      el.innerHTML = streamHtml(ch.streams[i++], muted);
+      var v = el.querySelector('video');
+      if (v) v.addEventListener('error', attempt);
+    }
+    attempt();
+    return true;
+  }
+  var previewTimer;
+  function startPreview() {
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(function () {
+      if (state.screen !== 'tv') return;
+      var ch = currentChannel(), box = document.querySelector('.preview-stream');
+      if (playInto(box, ch, true)) document.querySelector('.preview').className += ' playing';
+    }, 900);
+  }
+  function currentChannel() { var c = channels()[state.category]; return c ? c.list[state.channel] : null; }
+
   var toastTimer;
   function toast(msg) {
     var t = document.getElementById('toast');
@@ -87,12 +117,12 @@
       for (var j = 0; j < list.length; j++) {
         var ch = list[j];
         rows += '<div class="channel focusable' + (j === state.channel ? ' selected' : '') + '" id="ch-' + j + '" data-act="channel" data-arg="' + j + '">' +
-          '<span class="mark">' + esc(ch.short || '') + '</span><span class="channel-copy"><strong>' + esc(ch.name) + '</strong><small>' + esc(ch.detail || '') + '</small></span><span class="play">▶</span></div>';
+          '<span class="mark">' + esc(ch.short || '') + '</span><span class="channel-copy"><strong>' + esc(ch.name) + '</strong><small>' + esc(ch.detail || '') + '</small></span><span class="play">' + (ch.streams ? '▶' : '') + '</span></div>';
       }
       rows += '</div>';
-      var now = '<div class="now"><div class="preview"><span class="live">Live</span><span class="preview-mark">' + esc(sel.short || '') + '</span><span class="preview-label">CHANNEL PREVIEW</span></div>' +
+      var now = '<div class="now"><div class="preview"><div class="preview-stream"></div><span class="live">Live</span><span class="preview-mark">' + esc(sel.short || '') + '</span><span class="preview-label">CHANNEL PREVIEW</span></div>' +
         '<p class="kicker">Now selected</p><h2>' + esc(sel.name) + '</h2><p class="now-detail">' + esc(sel.detail || '') + '</p>' +
-        '<div class="button focusable" id="watch" data-act="watch">Watch channel <span>→</span></div></div>';
+        '<div class="button focusable" id="watch" data-act="watch">' + (sel.streams ? 'Watch channel' : 'Available on the villa TVs') + ' <span>→</span></div></div>';
       return '<div class="screen page">' + header() + title('Entertainment', 'Live TV') + '<div class="page-body">' + rail + rows + now + '</div></div>';
     },
 
@@ -115,6 +145,12 @@
       }
       cards += '<div class="card focusable" id="music-sp" data-act="spotify"><span class="logo">Spotify</span><i>↗</i><span><small>Your music</small><strong>Spotify</strong></span></div>';
       return '<div class="screen page">' + header() + title('Set the mood', 'Music') + '<div class="cards">' + cards + '</div></div>';
+    },
+
+    player: function () {
+      var ch = currentChannel();
+      return '<div class="screen player"><div class="player-stream"></div><div class="player-banner"><span class="mark">' + esc(ch.short || '') + '</span>' +
+        '<span><strong>' + esc(ch.name) + '</strong><small>' + esc(ch.detail || '') + ' · Up / Down to change channel · Back for the guide</small></span></div></div>';
     },
 
     guide: function () { return qrPage(C.qrPages.guide); },
@@ -150,7 +186,8 @@
     app.innerHTML = screens[screen]();
     if (state.staff) app.innerHTML += staffHtml();
     var el = focusId && document.getElementById(focusId);
-    focus(el || first());
+    if (screen !== 'player') focus(el || first());
+    if (screen === 'tv' && !state.staff) startPreview();
   }
   function scope() { return state.staff ? app.querySelector('.overlay') : app; }
   function first() {
@@ -200,17 +237,35 @@
     else if (act === 'home') render('home', 'tile-' + indexOfTile(state.screen));
     else if (act === 'cat') render('tv', 'ch-0');
     else if (act === 'channel' || act === 'watch') {
-      var ch = channels()[state.category].list[state.channel];
-      Platform.watchLiveTv(ch, function (ok) { if (!ok) toast('To watch TV, press SOURCE on the remote and choose TV.'); });
+      var ch = currentChannel();
+      if (ch && ch.streams) openPlayer();
+      else Platform.watchLiveTv(ch, function (ok) { if (!ok) toast(ch.name + ' will be on the villa TVs. On this TV, press SOURCE and choose TV.'); });
     }
     else if (act === 'app') openApp(C.apps[+arg]);
     else if (act === 'spotify') openApp(findApp('spotify'));
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);
   }
+  var bannerTimer;
+  function openPlayer() {
+    render('player');
+    playInto(document.querySelector('.player-stream'), currentChannel(), false);
+    var b = document.querySelector('.player-banner');
+    clearTimeout(bannerTimer); bannerTimer = setTimeout(function () { if (b) b.className += ' hide'; }, 5000);
+  }
+  // Up / Down in full screen: next or previous channel that has a stream, across all categories.
+  function zap(step) {
+    var cats = channels(), flat = [], k, i;
+    for (k in cats) if (cats.hasOwnProperty(k)) for (i = 0; i < cats[k].list.length; i++) if (cats[k].list[i].streams) flat.push([k, i]);
+    for (i = 0; i < flat.length; i++) if (flat[i][0] === state.category && flat[i][1] === state.channel) break;
+    var n = flat[(i + step + flat.length) % flat.length];
+    state.category = n[0]; state.channel = n[1];
+    openPlayer();
+  }
   function indexOfTile(screen) { for (var i = 0; i < C.homeTiles.length; i++) if (C.homeTiles[i].screen === screen) return i; return 0; }
   function back() {
     if (state.staff) { state.staff = null; render(state.screen); return; }
+    if (state.screen === 'player') { render('tv', 'ch-' + state.channel); return; }
     if (state.screen !== 'home') activate(document.getElementById('back'));
   }
 
@@ -257,6 +312,14 @@
       e.preventDefault(); return;
     }
     state.upCount = 0;
+    if (state.screen === 'player' && !state.staff) {
+      if (k === K.up || k === 427) zap(-1);
+      else if (k === K.down || k === 428) zap(1);
+      else if (K.back.indexOf(k) !== -1) back();
+      else if (k === K.enter) { var b = document.querySelector('.player-banner'); if (b) b.className = 'player-banner'; }
+      else return;
+      e.preventDefault(); return;
+    }
     if (k === K.left) move('left');
     else if (k === K.right) move('right');
     else if (k === K.up) move('up');

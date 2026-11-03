@@ -32,28 +32,34 @@ var ETIENNE_CONFIG = {
     { key: 'spotify', name: 'Spotify', eyebrow: 'Your music', tizen: ['3201606009684'], android: 'com.spotify.tv.android' }
   ],
 
-  // Placeholder channel list. On the Sony build the real tuner channels replace it.
+  // Live TV. Channels with "streams" play inside the screen over the internet (official free streams only).
+  // Streams are tried in order: "hls" is a direct stream, "youtube" is the channel's own YouTube live stream.
+  // Channels without streams are placeholders until the Sony's tuner channels replace them.
   channels: {
     'Thailand': { note: 'Local & national', list: [
-      { name: 'Thai PBS', detail: 'National · Live', short: 'TP' },
-      { name: 'Channel 3', detail: 'Entertainment · Live', short: '3' },
-      { name: 'TNN 16', detail: 'News · Live', short: 'TNN' },
-      { name: 'One 31', detail: 'Entertainment · Live', short: '31' } ] },
+      { name: 'Thai PBS', detail: 'National · Live', short: 'TP', streams: [{ type: 'youtube', channel: 'UC5TOFhyb_LxL2VG_Zenhpzw' }] },
+      { name: 'TNN 16', detail: 'News · Live', short: 'TNN', streams: [{ type: 'youtube', channel: 'UCN-5TkXd9PVabsRecrMSfWg' }] },
+      { name: 'Channel 3', detail: 'Entertainment · On the villa TVs', short: '3' },
+      { name: 'One 31', detail: 'Entertainment · On the villa TVs', short: '31' } ] },
     'International': { note: 'World news', list: [
-      { name: 'BBC World News', detail: 'International · Live', short: 'BBC' },
-      { name: 'CNN International', detail: 'International · Live', short: 'CNN' },
-      { name: 'France 24', detail: 'International · Live', short: 'F24' },
-      { name: 'Al Jazeera', detail: 'International · Live', short: 'AJ' } ] },
+      { name: 'Al Jazeera English', detail: 'International news · Live', short: 'AJ', streams: [
+        { type: 'hls', url: 'https://live-hls-web-aje.getaj.net/AJE/index.m3u8' },
+        { type: 'youtube', channel: 'UCNye-wNBqNL5ZzHSJj3l8Bg' } ] },
+      { name: 'DW News', detail: 'International news · Live', short: 'DW', streams: [
+        { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8' },
+        { type: 'youtube', channel: 'UCknLrEdhRCp1aegoMqRaCZg' } ] },
+      { name: 'France 24', detail: 'International news · Live', short: 'F24', streams: [{ type: 'youtube', channel: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' }] },
+      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] } ] },
     'Sport': { note: 'Live sport', list: [
-      { name: 'beIN Sports 1', detail: 'Football · Live', short: 'beIN' },
-      { name: 'True Sports', detail: 'Thailand · Live', short: 'TS' },
-      { name: 'Eurosport', detail: 'International · Live', short: 'EU' },
-      { name: 'Golf Channel', detail: 'Golf · Live', short: 'GC' } ] },
+      { name: 'beIN Sports 1', detail: 'Football · On the villa TVs', short: 'beIN' },
+      { name: 'True Sports', detail: 'Thailand · On the villa TVs', short: 'TS' },
+      { name: 'Eurosport', detail: 'International · On the villa TVs', short: 'EU' },
+      { name: 'Golf Channel', detail: 'Golf · On the villa TVs', short: 'GC' } ] },
     'Movies': { note: 'Films & cinema', list: [
-      { name: 'HBO', detail: 'Movies · Now playing', short: 'HBO' },
-      { name: 'Cinemax', detail: 'Movies · Now playing', short: 'MAX' },
-      { name: 'Paramount', detail: 'Movies · Now playing', short: 'P+' },
-      { name: 'Film Asia', detail: 'Asian cinema · Live', short: 'FA' } ] }
+      { name: 'HBO', detail: 'Movies · On the villa TVs', short: 'HBO' },
+      { name: 'Cinemax', detail: 'Movies · On the villa TVs', short: 'MAX' },
+      { name: 'Paramount', detail: 'Movies · On the villa TVs', short: 'P+' },
+      { name: 'Film Asia', detail: 'Asian cinema · On the villa TVs', short: 'FA' } ] }
   },
 
   music: [
