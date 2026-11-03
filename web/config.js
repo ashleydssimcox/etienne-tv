@@ -49,7 +49,9 @@ var ETIENNE_CONFIG = {
         { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8' },
         { type: 'youtube', channel: 'UCknLrEdhRCp1aegoMqRaCZg' } ] },
       { name: 'France 24', detail: 'International news · Live', short: 'F24', streams: [{ type: 'youtube', channel: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' }] },
-      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] } ] },
+      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] },
+      // Test only: a public test stream, to check whether this TV can play direct streams at all. Remove after testing.
+      { name: 'Test stream', detail: 'Testing only', short: 'TEST', streams: [{ type: 'hls', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8' }] } ] },
     'Sport': { note: 'Live sport', list: [
       { name: 'beIN Sports 1', detail: 'Football · On the villa TVs', short: 'beIN' },
       { name: 'True Sports', detail: 'Thailand · On the villa TVs', short: 'TS' },

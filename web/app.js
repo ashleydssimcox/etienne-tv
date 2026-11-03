@@ -33,11 +33,25 @@
   function playInto(el, ch, muted) {
     if (!el || !ch || !ch.streams || !ch.streams.length) return false;
     var i = 0;
+    // Test build: a status line shows what each stream is doing, so a TV that can't play one tells us why.
+    function status(msg) {
+      var s = document.getElementById('stream-status');
+      if (!s) { s = document.createElement('div'); s.id = 'stream-status'; document.getElementById('stage').appendChild(s); }
+      s.innerHTML = esc(msg);
+    }
     function attempt() {
-      if (i >= ch.streams.length) { el.innerHTML = '<span class="stream-msg">This channel isn’t available right now.</span>'; return; }
-      el.innerHTML = streamHtml(ch.streams[i++], muted);
-      var v = el.querySelector('video');
-      if (v) v.addEventListener('error', attempt);
+      if (i >= ch.streams.length) { el.innerHTML = '<span class="stream-msg">This channel isn’t available right now.</span>'; status(ch.name + ': no stream worked'); return; }
+      var st = ch.streams[i++], tries = i;
+      el.innerHTML = streamHtml(st, muted);
+      status(ch.name + ' · try ' + tries + ' (' + st.type + ') loading');
+      var v = el.querySelector('video'), f = el.querySelector('iframe');
+      if (v) {
+        v.addEventListener('error', function () { status(ch.name + ' · try ' + tries + ' (hls) error ' + (v.error ? v.error.code : '?')); setTimeout(attempt, 800); });
+        v.addEventListener('playing', function () { status(ch.name + ' · try ' + tries + ' (hls) playing'); });
+        v.addEventListener('stalled', function () { status(ch.name + ' · try ' + tries + ' (hls) stalled'); });
+        try { var p = v.play(); if (p && p.catch) p.catch(function (e) { status(ch.name + ' · play() refused: ' + e.name); if (e.name === 'NotSupportedError') setTimeout(attempt, 800); }); } catch (e) {}
+      }
+      if (f) f.addEventListener('load', function () { status(ch.name + ' · try ' + tries + ' (youtube) page loaded'); });
     }
     attempt();
     return true;
