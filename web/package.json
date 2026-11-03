@@ -1,0 +1,13 @@
+{
+  "name": "etienne-tv",
+  "version": "0.2.0",
+  "description": "The Étienne villa TV home screen",
+  "packageType": "app",
+  "appName": "The Étienne",
+  "appPath": "web/index.html?v=4",
+  "keys": [
+    "MediaPlayPause",
+    "ColorF0Red"
+  ],
+  "license": "MIT"
+}

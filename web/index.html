@@ -3,16 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1920, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
 <title>The Étienne</title>
-<link rel="stylesheet" href="styles.css?v=3">
+<script>
+  // Loads the newest copy of each file every time, so the TV never runs an old saved version.
+  var ETIENNE_T = new Date().getTime();
+  document.write('<link rel="stylesheet" href="styles.css?t=' + ETIENNE_T + '">');
+</script>
 </head>
 <body>
 <div id="stage">
   <div id="app"></div>
   <div id="toast"></div>
 </div>
-<script src="config.js?v=3"></script>
-<script src="platform.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script>
+  document.write('<script src="config.js?t=' + ETIENNE_T + '"><\/script>');
+  document.write('<script src="platform.js?t=' + ETIENNE_T + '"><\/script>');
+  document.write('<script src="app.js?t=' + ETIENNE_T + '"><\/script>');
+</script>
 </body>
 </html>
