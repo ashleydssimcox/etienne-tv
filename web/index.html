@@ -3,13 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1920, initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache">
 <title>The Étienne</title>
-<script>
-  // Loads the newest copy of each file every time, so the TV never runs an old saved version.
-  var ETIENNE_T = new Date().getTime();
-  document.write('<link rel="stylesheet" href="styles.css?t=' + ETIENNE_T + '">');
-</script>
 </head>
 <body>
 <div id="stage">
@@ -17,9 +11,27 @@
   <div id="toast"></div>
 </div>
 <script>
-  document.write('<script src="config.js?t=' + ETIENNE_T + '"><\/script>');
-  document.write('<script src="platform.js?t=' + ETIENNE_T + '"><\/script>');
-  document.write('<script src="app.js?t=' + ETIENNE_T + '"><\/script>');
+/* Starter page. It never needs changing: it loads the newest interface files from GitHub Pages every time,
+   and uses the copies packed with this page only if GitHub Pages can't be reached. */
+(function () {
+  var LIVE = 'https://ashleydssimcox.github.io/etienne-tv/web/';
+  var t = '?t=' + new Date().getTime();
+  var files = ['config.js', 'platform.js', 'app.js'];
+  function css(base) {
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = base + 'styles.css' + t;
+    document.head.appendChild(l);
+  }
+  function load(base, i, onFail) {
+    if (i >= files.length) return;
+    var s = document.createElement('script');
+    s.src = base + files[i] + t;
+    s.onload = function () { load(base, i + 1, onFail); };
+    s.onerror = function () { if (i === 0 && onFail) onFail(); };
+    document.body.appendChild(s);
+  }
+  css(LIVE);
+  load(LIVE, 0, function () { css(''); load('', 0, null); });
+})();
 </script>
 </body>
 </html>
