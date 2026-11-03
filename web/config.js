@@ -37,21 +37,28 @@ var ETIENNE_CONFIG = {
   // Channels without streams are placeholders until the Sony's tuner channels replace them.
   channels: {
     'Thailand': { note: 'Local & national', list: [
-      { name: 'Thai PBS', detail: 'National · Live', short: 'TP', streams: [{ type: 'youtube', channel: 'UC5TOFhyb_LxL2VG_Zenhpzw' }] },
+      { name: 'Thai PBS', detail: 'National · Live', short: 'TP', streams: [
+        { type: 'hls', url: 'https://thaipbs-live.cdn.byteark.com/live/playlist.m3u8' },
+        { type: 'youtube', channel: 'UC5TOFhyb_LxL2VG_Zenhpzw' } ] },
+      { name: 'MCOT HD', detail: 'National · Live', short: 'MC', streams: [
+        { type: 'hls', url: 'https://mcothd-streaming-edge-cdn.mcot.net/tencentmcot/smil:tencentmcot.smil/playlist.m3u8' } ] },
       { name: 'TNN 16', detail: 'News · Live', short: 'TNN', streams: [{ type: 'youtube', channel: 'UCN-5TkXd9PVabsRecrMSfWg' }] },
       { name: 'Channel 3', detail: 'Entertainment · On the villa TVs', short: '3' },
       { name: 'One 31', detail: 'Entertainment · On the villa TVs', short: '31' } ] },
     'International': { note: 'World news', list: [
       { name: 'Al Jazeera English', detail: 'International news · Live', short: 'AJ', streams: [
+        { type: 'hls', url: 'https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8' },
         { type: 'hls', url: 'https://live-hls-web-aje.getaj.net/AJE/index.m3u8' },
         { type: 'youtube', channel: 'UCNye-wNBqNL5ZzHSJj3l8Bg' } ] },
       { name: 'DW News', detail: 'International news · Live', short: 'DW', streams: [
-        { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8' },
+        { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/master.m3u8' },
         { type: 'youtube', channel: 'UCknLrEdhRCp1aegoMqRaCZg' } ] },
-      { name: 'France 24', detail: 'International news · Live', short: 'F24', streams: [{ type: 'youtube', channel: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' }] },
-      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] },
-      // Test only: a public test stream, to check whether this TV can play direct streams at all. Remove after testing.
-      { name: 'Test stream', detail: 'Testing only', short: 'TEST', streams: [{ type: 'hls', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8' }] } ] },
+      { name: 'France 24', detail: 'International news · Live', short: 'F24', streams: [
+        { type: 'hls', url: 'https://live.france24.com/hls/live/2037218/F24_EN_HI_HLS/master_2300.m3u8' },
+        { type: 'youtube', channel: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' } ] },
+      { name: 'NHK World', detail: 'Japan & Asia · Live', short: 'NHK', streams: [
+        { type: 'hls', url: 'https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8' } ] },
+      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] } ] },
     'Sport': { note: 'Live sport', list: [
       { name: 'beIN Sports 1', detail: 'Football · On the villa TVs', short: 'beIN' },
       { name: 'True Sports', detail: 'Thailand · On the villa TVs', short: 'TS' },
