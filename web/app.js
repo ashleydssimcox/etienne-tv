@@ -123,14 +123,16 @@
       var list = cats[state.category].list;
       if (state.channel >= list.length) state.channel = 0;
       var sel = list[state.channel];
-      var rail = '<div class="rail"><div class="col-head"><b class="col-title"><span class="step-no">1</span>Choose a category</b></div>';
+      // Left: a sidebar menu of categories. Right: the channels in the chosen category, with a preview.
+      var rail = '<div class="side rail">' + brand() + '<div class="side-title"><p class="kicker">Entertainment</p><h1>Live TV</h1></div>' +
+        '<p class="side-label">Categories</p>';
       for (var i = 0; i < names.length; i++) {
         var c = cats[names[i]];
         rail += '<div class="cat focusable' + (names[i] === state.category ? ' active' : '') + '" id="cat-' + i + '" data-act="cat" data-arg="' + esc(names[i]) + '">' +
-          '<span class="cat-number">0' + (i + 1) + '</span><span class="cat-copy"><strong>' + esc(names[i]) + '</strong><small>' + esc(c.note) + ' · ' + c.list.length + ' channels</small></span><span class="cat-arrow">→</span></div>';
+          '<span class="cat-copy"><strong>' + esc(names[i]) + '</strong><small>' + c.list.length + ' channels</small></span><span class="cat-arrow">›</span></div>';
       }
-      rail += '</div>';
-      var rows = '<div class="channels"><div class="col-head"><b class="col-title"><span class="step-no">2</span>Choose a channel</b><span>' + esc(state.category) + ' · ' + list.length + ' channels</span></div>';
+      rail += '<div class="side-foot"><div class="back focusable" id="back" data-act="home"><span>←</span>Home</div></div></div>';
+      var rows = '<div class="channels">';
       for (var j = 0; j < list.length; j++) {
         var ch = list[j];
         rows += '<div class="channel focusable' + (j === state.channel ? ' selected' : '') + '" id="ch-' + j + '" data-act="channel" data-arg="' + j + '">' +
@@ -140,8 +142,11 @@
       var now = '<div class="now"><div class="preview"><div class="preview-stream"></div><span class="live">Live</span><span class="preview-mark">' + esc(sel.short || '') + '</span><span class="preview-label">CHANNEL PREVIEW</span></div>' +
         '<p class="kicker">Now selected</p><h2>' + esc(sel.name) + '</h2><p class="now-detail">' + esc(sel.detail || '') + '</p>' +
         '<div class="button focusable" id="watch" data-act="watch">' + (sel.streams ? 'Watch channel' : 'Available on the villa TVs') + ' <span>→</span></div></div>';
-      return '<div class="screen page">' + header() + title('Entertainment', 'Live TV') + '<div class="page-body tv-body">' + rail + rows + now + '</div>' +
-        '<p class="hint tv-hint">Left and right to move between categories and channels · OK to watch · Back for home</p></div>';
+      var main = '<div class="tv-main"><div class="tv-top"><div><p class="kicker">' + esc(cats[state.category].note) + '</p><h2 class="cat-title">' + esc(state.category) +
+        '</h2></div><div class="clock"><span class="js-clock">' + clock() + '</span><small>Koh Samui</small></div></div>' +
+        '<div class="tv-content">' + rows + now + '</div>' +
+        '<p class="hint tv-hint">◀ ▶ Move between the menu and the channels · OK to watch · Back for home</p></div>';
+      return '<div class="screen tvx tv-body">' + rail + main + '</div>';
     },
 
     streaming: function () {
@@ -220,7 +225,7 @@
     var body = document.querySelector('.tv-body');
     if (body) {
       var act0 = el.getAttribute('data-act');
-      body.className = 'page-body tv-body ' + (act0 === 'cat' ? 'in-cats' : (act0 === 'channel' ? 'in-channels' : 'in-watch'));
+      body.setAttribute('data-col', act0 === 'cat' || act0 === 'home' ? 'cats' : 'channels');
     }
     // Live TV: moving onto a channel updates "Now selected"; onto a category switches the list.
     if (state.screen === 'tv' && !state.staff) {

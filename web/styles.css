@@ -154,3 +154,27 @@ video.stream { object-fit: cover; }
 .col-title { font-weight: 500; }
 .col-head .col-title .step-no { font-size: 13px; letter-spacing: 0; color: #d6c4a5; }
 .tv-body.in-cats .rail .step-no, .tv-body.in-channels .channels .step-no { color: #050505; }
+
+/* Live TV v2: sidebar menu (categories) + content (channels), like an in-flight entertainment screen */
+.tvx { display: -webkit-flex; display: flex; background: #050505; }
+.side { width: 470px; height: 1080px; padding: 54px 40px 40px; background: #12110f; border-right: 1px solid rgba(214,196,165,.25); display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; -webkit-flex-shrink: 0; flex-shrink: 0; margin: 0; opacity: 1 !important; }
+.side .brand { margin-bottom: 44px; }
+.side-title h1 { margin: 0 0 40px; font-size: 64px; font-weight: 200; letter-spacing: -.05em; line-height: .9; }
+.side-label { margin: 0 0 10px; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: rgba(244,242,237,.45); }
+.side .cat { -webkit-flex: none; flex: none; height: 104px; margin-bottom: 8px; padding: 0 22px 0 26px; border: 0; border-radius: 4px; color: rgba(244,242,237,.7); background: transparent; }
+.side .cat strong { font-size: 30px; margin-bottom: 8px; }
+.side .cat-arrow { font-size: 34px; opacity: .35; color: #f4f2ed; }
+.side .cat.active { background: rgba(214,196,165,.14); color: #fff; }
+.side .cat.active:before { left: 0; top: 18px; bottom: 18px; width: 4px; }
+.side .cat.active .cat-arrow { opacity: 1; color: #d6c4a5; }
+.side .cat.focused { outline: 0; background: #d6c4a5; color: #050505; }
+.side .cat.focused small, .side .cat.focused .cat-arrow { color: #050505; opacity: 1; }
+.side-foot { margin-top: auto; }
+.tv-main { -webkit-flex: 1; flex: 1; height: 1080px; padding: 54px 70px 40px; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; background: radial-gradient(circle at 78% 30%, #1b1915 0, #080808 40%, #030303 80%); -webkit-transition: opacity .25s; transition: opacity .25s; }
+.tv-top { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: flex-end; align-items: flex-end; padding-bottom: 28px; margin-bottom: 26px; border-bottom: 1px solid rgba(255,255,255,.17); }
+.cat-title { margin: 0; font-size: 64px; font-weight: 200; letter-spacing: -.05em; line-height: .95; }
+.tv-content { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; min-height: 0; }
+.tvx .channels { margin-right: 44px; opacity: 1; }
+.tvx .channel { -webkit-flex: none; flex: none; height: 118px; margin-top: 0; margin-bottom: 12px; }
+.tvx[data-col="cats"] .tv-main { opacity: .5; }
+.tvx[data-col="channels"] .side .cat.active { background: rgba(214,196,165,.08); }
