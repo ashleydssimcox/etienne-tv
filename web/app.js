@@ -161,7 +161,7 @@
         rail += '<div class="cat focusable' + (names[i] === state.category ? ' active' : '') + '" id="cat-' + i + '" data-act="cat" data-arg="' + esc(names[i]) + '">' +
           '<span class="cat-copy"><strong>' + esc(names[i]) + '</strong><small>' + c.list.length + ' channels</small></span><span class="cat-arrow">›</span></div>';
       }
-      rail += '<div class="side-foot"><div class="back focusable" id="back" data-act="home"><span>←</span>Home</div></div></div>';
+      rail += '<div class="side-foot"><div class="back home-btn focusable" id="back" data-act="home"><span>←</span>Back to home</div></div></div>';
       var rows = '<div class="channels">';
       for (var j = 0; j < list.length; j++) {
         var ch = list[j];
@@ -169,13 +169,14 @@
           '<span class="mark">' + esc(ch.short || '') + '</span><span class="channel-copy"><strong>' + esc(ch.name) + '</strong><small>' + esc(ch.detail || '') + '</small></span><span class="play">' + (ch.streams ? '▶' : '') + '</span></div>';
       }
       rows += '</div>';
-      var now = '<div class="now"><div class="preview"><div class="preview-stream"></div><span class="live">Live</span><span class="preview-mark">' + esc(sel.short || '') + '</span><span class="preview-label">CHANNEL PREVIEW</span></div>' +
+      var now = '<div class="now"><div class="preview preview-static">' + (sel.streams ? '<span class="live">Live</span>' : '') +
+        (sel.logo ? '<img class="preview-logo" src="' + esc(sel.logo) + '" alt="">' : '<span class="preview-mark">' + esc(sel.short || '') + '</span>') + '</div>' +
         '<p class="kicker">Now selected</p><h2>' + esc(sel.name) + '</h2><p class="now-detail">' + esc(sel.detail || '') + '</p>' +
-        '<div class="button focusable" id="watch" data-act="watch">' + (sel.streams ? 'Watch channel' : 'Available on the villa TVs') + ' <span>→</span></div></div>';
+        '<div class="button focusable" id="watch" data-act="watch">' + (sel.streams ? 'Watch channel' : 'Coming soon') + ' <span>→</span></div></div>';
       var main = '<div class="tv-main"><div class="tv-top"><div><p class="kicker">' + esc(cats[state.category].note) + '</p><h2 class="cat-title">' + esc(state.category) +
         '</h2></div><div class="clock"><span class="js-clock">' + clock() + '</span><small>Koh Samui</small></div></div>' +
         '<div class="tv-content">' + rows + now + '</div>' +
-        '<p class="hint tv-hint">◀ ▶ Move between the menu and the channels · OK to watch · Back for home</p></div>';
+        '<p class="tv-hint"><span class="kbd">◀ ▶</span>Switch between menu and channels<span class="kbd">OK</span>Watch<span class="kbd">BACK</span>Home</p></div>';
       return '<div class="screen tvx tv-body">' + rail + main + '</div>';
     },
 
@@ -241,7 +242,6 @@
     if (state.staff) app.innerHTML += staffHtml();
     var el = focusId && document.getElementById(focusId);
     if (screen !== 'player') focus(el || first());
-    if (screen === 'tv' && !state.staff) startPreview();
   }
   function scope() { return state.staff ? app.querySelector('.overlay') : app; }
   function first() {
@@ -268,6 +268,7 @@
   function centre(r) { return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
   function move(dir) {
     if (!focused) { focus(first()); return; }
+    if (dir === 'right' && focused.getAttribute('data-act') === 'cat') { var c0 = document.getElementById('ch-0'); if (c0) { focus(c0); return true; } }
     var from = focused.getBoundingClientRect(), a = centre(from);
     var els = scope().querySelectorAll('.focusable'), best = null, bestScore = Infinity;
     for (var i = 0; i < els.length; i++) {
@@ -299,7 +300,7 @@
     else if (act === 'channel' || act === 'watch') {
       var ch = currentChannel();
       if (ch && ch.streams) openPlayer();
-      else Platform.watchLiveTv(ch, function (ok) { if (!ok) toast(ch.name + ' will be on the villa TVs. On this TV, press SOURCE and choose TV.'); });
+      else Platform.watchLiveTv(ch, function (ok) { if (!ok) toast(ch.name + ' is coming soon.'); });
     }
     else if (act === 'app') openApp(C.apps[+arg]);
     else if (act === 'spotify') openApp(findApp('spotify'));

@@ -196,3 +196,21 @@ video.stream { object-fit: cover; }
 .side .cat.focused { background: #2b2418; }
 .button.focused { background: #d6c4a5; color: #050505; outline: 0; }
 #stream-status { text-align: left; line-height: 1.5; max-width: 900px; font-size: 15px; }
+
+/* Static channel card instead of a live preview */
+.preview-static { background: linear-gradient(145deg, #2b2418 0%, #12110f 70%); border: 1px solid rgba(214,196,165,.35); }
+.preview-static .preview-mark { font-size: 110px; color: #d6c4a5; text-shadow: none; }
+.preview-logo { max-width: 360px; max-height: 180px; }
+/* Clearer navigation help */
+.home-btn { display: inline-block; padding: 16px 24px; border: 1px solid rgba(214,196,165,.6); color: #f4f2ed; font-size: 16px; letter-spacing: .18em; }
+.home-btn span { font-size: 22px; }
+.home-btn.focused { background: #2b2418; outline: 3px solid #d6c4a5; }
+.tv-hint { margin: 18px 0 0; color: rgba(244,242,237,.85); font-size: 17px; letter-spacing: .04em; }
+.tv-hint .kbd { display: inline-block; margin: 0 10px 0 26px; padding: 4px 10px; border: 1px solid #d6c4a5; border-radius: 4px; color: #d6c4a5; font-size: 14px; font-weight: 700; letter-spacing: .08em; }
+.tv-hint .kbd:first-child { margin-left: 0; }
+/* Clearer small headings ("Entertainment", "Categories", category description) */
+.tvx .kicker { font-size: 17px; font-weight: 700; letter-spacing: .3em; color: #d6c4a5; }
+.side-label { font-size: 17px; font-weight: 700; letter-spacing: .28em; color: rgba(244,242,237,.88); margin-bottom: 14px; }
+/* Clearer "Koh Samui · Thailand" above The Étienne, and under the clock */
+.brand-location { font-size: 14px; font-weight: 700; letter-spacing: .4em; color: rgba(244,242,237,.88); margin-bottom: 10px; }
+.clock small { font-size: 13px; font-weight: 700; letter-spacing: .25em; color: rgba(244,242,237,.8); }

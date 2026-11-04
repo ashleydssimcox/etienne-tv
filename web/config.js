@@ -37,52 +37,52 @@ var ETIENNE_CONFIG = {
   // Channels without streams are placeholders until the Sony's tuner channels replace them.
   channels: {
     'Thailand': { note: 'Local & national', list: [
-      { name: 'Thai PBS', detail: 'National · Live', short: 'TP', streams: [
+      { name: 'Thai PBS', detail: 'Public service · News & documentary', short: 'TP', streams: [
         { type: 'hls', url: 'https://thaipbs-live.cdn.byteark.com/live/playlist.m3u8' },
         { type: 'youtube', channel: 'UC5TOFhyb_LxL2VG_Zenhpzw' } ] },
-      { name: 'MCOT HD', detail: 'National · Live', short: 'MC', streams: [
+      { name: 'MCOT HD', detail: 'News & entertainment', short: 'MC', streams: [
         { type: 'hls', url: 'https://mcothd-streaming-edge-cdn.mcot.net/tencentmcot/smil:tencentmcot.smil/playlist.m3u8' } ] },
-      { name: 'TNN 16', detail: 'News · Live', short: 'TNN', streams: [{ type: 'youtube', channel: 'UCN-5TkXd9PVabsRecrMSfWg' }] },
-      { name: 'Channel 3', detail: 'Entertainment · On the villa TVs', short: '3' },
-      { name: 'One 31', detail: 'Entertainment · On the villa TVs', short: '31' } ] },
+      { name: 'TNN 16', detail: '24-hour news', short: 'TNN', streams: [{ type: 'youtube', channel: 'UCN-5TkXd9PVabsRecrMSfWg' }] },
+      { name: 'Channel 3', detail: 'Drama & entertainment', short: '3' },
+      { name: 'One 31', detail: 'Drama & entertainment', short: '31' } ] },
     'International': { note: 'World news', list: [
-      { name: 'Al Jazeera English', detail: 'International news · Live', short: 'AJ', streams: [
+      { name: 'Al Jazeera English', detail: 'International news · Qatar', short: 'AJ', streams: [
         { type: 'hls', url: 'https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8' },
         { type: 'hls', url: 'https://live-hls-apps-aje-v3-fa.getaj.net/AJE/index.m3u8' },
         { type: 'hls', url: 'https://live-hls-web-aje-fa.thehlive.com/AJE/index.m3u8' },
         { type: 'youtube', channel: 'UCNye-wNBqNL5ZzHSJj3l8Bg' } ] },
-      { name: 'DW News', detail: 'International news · Live', short: 'DW', streams: [
+      { name: 'DW News', detail: 'International news · Germany', short: 'DW', streams: [
         { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/master.m3u8' },
         { type: 'hls', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8' },
         { type: 'youtube', channel: 'UCknLrEdhRCp1aegoMqRaCZg' } ] },
-      { name: 'France 24', detail: 'International news · Live', short: 'F24', streams: [
+      { name: 'France 24', detail: 'International news · France', short: 'F24', streams: [
         { type: 'hls', url: 'https://live.france24.com/hls/live/2037218/F24_EN_HI_HLS/master_2300.m3u8' },
         { type: 'hls', url: 'https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_2300.m3u8' },
         { type: 'hls', url: 'https://live.france24.com/hls/live/2037218/F24_EN_HI_HLS/master_900.m3u8' },
         { type: 'youtube', channel: 'UCQfwfsi5VrQ8yKZ-UWmAEFg' } ] },
-      { name: 'Sky News', detail: 'UK & world news · Live', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] } ] },
+      { name: 'Sky News', detail: 'International news · UK', short: 'SKY', streams: [{ type: 'youtube', channel: 'UCoMdktPbSTixAyNGwb-UYkQ' }] } ] },
     'Asia Pacific': { note: 'Regional news', list: [
-      { name: 'NHK World', detail: 'Japan & Asia · Live', short: 'NHK', streams: [
+      { name: 'NHK World', detail: 'International news · Japan', short: 'NHK', streams: [
         { type: 'hls', url: 'https://masterpl.hls.nhkworld.jp/hls/w/live/smarttv.m3u8' },
         { type: 'hls', url: 'https://media-tyo.hls.nhkworld.jp/hls/w/live/master.m3u8' },
         { type: 'hls', url: 'https://media-osa.hls.nhkworld.jp/hls/w/live/master.m3u8' } ] },
-      { name: 'ABC News', detail: 'Australia · Live', short: 'ABC', streams: [
+      { name: 'ABC News', detail: 'International news · Australia', short: 'ABC', streams: [
         { type: 'hls', url: 'https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index.m3u8' } ] },
-      { name: 'Bloomberg Asia', detail: 'Business news · Live', short: 'BBG', streams: [
-        { type: 'hls', url: 'https://bloomberg.com/media-manifest/streams/asia.m3u8' } ] },
-      { name: 'CGTN', detail: 'China & world news · Live', short: 'CG', streams: [
+      { name: 'CGTN', detail: 'International news · China', short: 'CG', streams: [
         { type: 'hls', url: 'https://english-livebkali.cgtn.com/live/encgtn.m3u8' },
-        { type: 'hls', url: 'https://news.cgtn.com/resource/live/english/cgtn-news.m3u8' } ] } ] },
+        { type: 'hls', url: 'https://news.cgtn.com/resource/live/english/cgtn-news.m3u8' } ] },
+      { name: 'Bloomberg Asia', detail: 'Business news · Asia', short: 'BBG', streams: [
+        { type: 'hls', url: 'https://bloomberg.com/media-manifest/streams/asia.m3u8' } ] } ] },
     'Sport': { note: 'Live sport', list: [
-      { name: 'beIN Sports 1', detail: 'Football · On the villa TVs', short: 'beIN' },
-      { name: 'True Sports', detail: 'Thailand · On the villa TVs', short: 'TS' },
-      { name: 'Eurosport', detail: 'International · On the villa TVs', short: 'EU' },
-      { name: 'Golf Channel', detail: 'Golf · On the villa TVs', short: 'GC' } ] },
+      { name: 'beIN Sports 1', detail: 'Football', short: 'beIN' },
+      { name: 'True Sports', detail: 'Thai & international sport', short: 'TS' },
+      { name: 'Eurosport', detail: 'Multi-sport', short: 'EU' },
+      { name: 'Golf Channel', detail: 'Golf', short: 'GC' } ] },
     'Movies': { note: 'Films & cinema', list: [
-      { name: 'HBO', detail: 'Movies · On the villa TVs', short: 'HBO' },
-      { name: 'Cinemax', detail: 'Movies · On the villa TVs', short: 'MAX' },
-      { name: 'Paramount', detail: 'Movies · On the villa TVs', short: 'P+' },
-      { name: 'Film Asia', detail: 'Asian cinema · On the villa TVs', short: 'FA' } ] }
+      { name: 'HBO', detail: 'Hollywood films & series', short: 'HBO' },
+      { name: 'Cinemax', detail: 'Action & thriller films', short: 'MAX' },
+      { name: 'Paramount', detail: 'Films & series', short: 'P+' },
+      { name: 'Film Asia', detail: 'Asian cinema', short: 'FA' } ] }
   },
 
   music: [
