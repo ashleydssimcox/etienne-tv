@@ -186,3 +186,12 @@ video.stream { object-fit: cover; }
 .side .cat.focused .cat-arrow { color: #d6c4a5; opacity: 1; }
 .side .cat { height: 92px; }
 .tvx .channel { height: 104px; margin-bottom: 10px; }
+/* Higher contrast for older TV panels: solid dark fills, gold outline, brighter small text */
+.tvx .channel { background: #15130f; border: 1px solid rgba(255,255,255,.22); }
+.tvx .channel.selected { background: #1d1913; border-color: rgba(214,196,165,.55); }
+.tvx .channel.focused { background: #2b2418; border: 1px solid #d6c4a5; outline: 3px solid #d6c4a5; }
+.tvx .channel.focused strong { color: #fff; }
+.tvx .channel.focused .mark { border-color: #d6c4a5; color: #d6c4a5; }
+.tvx .channel-copy small, .side .cat small { font-size: 14px; color: rgba(244,242,237,.78); }
+.side .cat.focused { background: #2b2418; }
+.button.focused { background: #d6c4a5; color: #050505; outline: 0; }

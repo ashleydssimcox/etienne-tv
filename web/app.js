@@ -29,9 +29,25 @@
     return '<iframe class="stream" frameborder="0" allow="autoplay; encrypted-media" src="https://www.youtube.com/embed/live_stream?channel=' +
       encodeURIComponent(s.channel) + '&autoplay=1&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3' + (muted ? '&mute=1' : '') + '"></iframe>';
   }
-  // Puts the first working stream into el; a direct stream that fails falls back to the next one.
+  // hls.js plays streams the TV's own video player can't. Loaded once; if it can't load, the TV's player is used.
+  var hlsReady = false, activeHls = null;
+  (function () {
+    var sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/hls.js@0.14.17/dist/hls.min.js';
+    sc.onload = function () { hlsReady = !!(window.Hls && window.Hls.isSupported()); };
+    document.getElementsByTagName('head')[0].appendChild(sc);
+  })();
+  function stopHls() { if (activeHls) { try { activeHls.destroy(); } catch (e) {} activeHls = null; } }
+
+  // Puts the first working stream into el. Each direct stream is tried with hls.js first, then the TV's own player.
   function playInto(el, ch, muted) {
     if (!el || !ch || !ch.streams || !ch.streams.length) return false;
+    var plan = [];
+    for (var k = 0; k < ch.streams.length; k++) {
+      var st0 = ch.streams[k];
+      if (st0.type === 'hls') { plan.push({ s: st0, how: 'hls.js' }); plan.push({ s: st0, how: 'tv' }); }
+      else plan.push({ s: st0, how: 'youtube' });
+    }
     var i = 0;
     // Test build: a status line shows what each stream is doing, so a TV that can't play one tells us why.
     function status(msg) {
@@ -40,21 +56,30 @@
       s.innerHTML = esc(msg);
     }
     function attempt() {
-      if (i >= ch.streams.length) { el.innerHTML = '<span class="stream-msg">This channel isn’t available right now.</span>'; status(ch.name + ': no stream worked'); return; }
-      var st = ch.streams[i++], tries = i;
-      el.innerHTML = streamHtml(st, muted);
-      status(ch.name + ' · try ' + tries + ' (' + st.type + ') loading');
-      var v = el.querySelector('video'), f = el.querySelector('iframe'), playing = false;
-      if (v) {
-        // A stream that hasn't started after 12 seconds counts as failed: move on to the next one.
-        var guard = setTimeout(function () { if (!playing && el.contains(v)) { status(ch.name + ' · try ' + tries + ' (hls) timed out'); attempt(); } }, 8000);
-        v.addEventListener('playing', function () { playing = true; clearTimeout(guard); });
-        v.addEventListener('error', function () { status(ch.name + ' · try ' + tries + ' (hls) error ' + (v.error ? v.error.code : '?')); setTimeout(attempt, 800); });
-        v.addEventListener('playing', function () { status(ch.name + ' · try ' + tries + ' (hls) playing'); });
-        v.addEventListener('stalled', function () { status(ch.name + ' · try ' + tries + ' (hls) stalled'); });
-        try { var p = v.play(); if (p && p.catch) p.catch(function (e) { status(ch.name + ' · play() refused: ' + e.name); if (e.name === 'NotSupportedError') setTimeout(attempt, 800); }); } catch (e) {}
+      stopHls();
+      if (!document.body.contains(el)) return;
+      if (i >= plan.length) { el.innerHTML = '<span class="stream-msg">This channel isn’t available right now.</span>'; status(ch.name + ': no stream worked'); return; }
+      var step = plan[i++], tries = i, label = ch.name + ' · try ' + tries + ' (' + step.how + ') ';
+      if (step.how === 'hls.js' && !hlsReady) { attempt(); return; }
+      if (step.how === 'youtube') { el.innerHTML = streamHtml(step.s, muted); status(label + 'loading'); return; }
+      el.innerHTML = '<video class="stream" autoplay playsinline' + (muted ? ' muted' : '') + '></video>';
+      var v = el.querySelector('video'), playing = false, done = false;
+      function fail(why) { if (done) return; done = true; clearTimeout(guard); status(label + why); setTimeout(attempt, 500); }
+      var guard = setTimeout(function () { if (!playing) fail('timed out'); }, 8000);
+      v.addEventListener('playing', function () { playing = true; clearTimeout(guard); status(label + 'playing'); });
+      v.addEventListener('error', function () { fail('error ' + (v.error ? v.error.code : '?')); });
+      if (step.how === 'hls.js') {
+        var h = new window.Hls({ enableWorker: false, lowLatencyMode: false });
+        activeHls = h;
+        h.on(window.Hls.Events.ERROR, function (ev, d) { if (d && d.fatal) fail('error ' + d.type + '/' + d.details); });
+        h.on(window.Hls.Events.MANIFEST_PARSED, function () { try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} });
+        h.loadSource(step.s.url);
+        h.attachMedia(v);
+      } else {
+        v.src = step.s.url;
+        try { var p = v.play(); if (p && p.catch) p.catch(function (e) { if (e.name === 'NotSupportedError') fail('not supported'); }); } catch (e) {}
       }
-      if (f) f.addEventListener('load', function () { status(ch.name + ' · try ' + tries + ' (youtube) page loaded'); });
+      status(label + 'loading');
     }
     attempt();
     return true;
@@ -205,6 +230,7 @@
   var focused = null;
   function render(screen, focusId) {
     if (screen !== state.screen) document.getElementById('toast').className = '';
+    stopHls();
     state.screen = screen;
     app.innerHTML = screens[screen]();
     if (state.staff) app.innerHTML += staffHtml();
