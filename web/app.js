@@ -123,14 +123,14 @@
       var list = cats[state.category].list;
       if (state.channel >= list.length) state.channel = 0;
       var sel = list[state.channel];
-      var rail = '<div class="rail"><div class="col-head">Categories</div>';
+      var rail = '<div class="rail"><div class="col-head"><b class="col-title"><span class="step-no">1</span>Choose a category</b></div>';
       for (var i = 0; i < names.length; i++) {
         var c = cats[names[i]];
         rail += '<div class="cat focusable' + (names[i] === state.category ? ' active' : '') + '" id="cat-' + i + '" data-act="cat" data-arg="' + esc(names[i]) + '">' +
           '<span class="cat-number">0' + (i + 1) + '</span><span class="cat-copy"><strong>' + esc(names[i]) + '</strong><small>' + esc(c.note) + ' · ' + c.list.length + ' channels</small></span><span class="cat-arrow">→</span></div>';
       }
       rail += '</div>';
-      var rows = '<div class="channels"><div class="col-head">' + esc(state.category) + '<span>' + list.length + ' channels</span></div>';
+      var rows = '<div class="channels"><div class="col-head"><b class="col-title"><span class="step-no">2</span>Choose a channel</b><span>' + esc(state.category) + ' · ' + list.length + ' channels</span></div>';
       for (var j = 0; j < list.length; j++) {
         var ch = list[j];
         rows += '<div class="channel focusable' + (j === state.channel ? ' selected' : '') + '" id="ch-' + j + '" data-act="channel" data-arg="' + j + '">' +
@@ -140,7 +140,8 @@
       var now = '<div class="now"><div class="preview"><div class="preview-stream"></div><span class="live">Live</span><span class="preview-mark">' + esc(sel.short || '') + '</span><span class="preview-label">CHANNEL PREVIEW</span></div>' +
         '<p class="kicker">Now selected</p><h2>' + esc(sel.name) + '</h2><p class="now-detail">' + esc(sel.detail || '') + '</p>' +
         '<div class="button focusable" id="watch" data-act="watch">' + (sel.streams ? 'Watch channel' : 'Available on the villa TVs') + ' <span>→</span></div></div>';
-      return '<div class="screen page">' + header() + title('Entertainment', 'Live TV') + '<div class="page-body">' + rail + rows + now + '</div></div>';
+      return '<div class="screen page">' + header() + title('Entertainment', 'Live TV') + '<div class="page-body tv-body">' + rail + rows + now + '</div>' +
+        '<p class="hint tv-hint">Left and right to move between categories and channels · OK to watch · Back for home</p></div>';
     },
 
     streaming: function () {
@@ -215,6 +216,12 @@
     if (!el) return;
     if (focused) focused.className = focused.className.replace(/\s?focused/g, '');
     focused = el; el.className += ' focused';
+    // Live TV: brighten the column you're in and dim the other one.
+    var body = document.querySelector('.tv-body');
+    if (body) {
+      var act0 = el.getAttribute('data-act');
+      body.className = 'page-body tv-body ' + (act0 === 'cat' ? 'in-cats' : (act0 === 'channel' ? 'in-channels' : 'in-watch'));
+    }
     // Live TV: moving onto a channel updates "Now selected"; onto a category switches the list.
     if (state.screen === 'tv' && !state.staff) {
       var act = el.getAttribute('data-act');

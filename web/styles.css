@@ -136,3 +136,21 @@ video.stream { object-fit: cover; }
 .player-banner small { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: rgba(244,242,237,.62); }
 .player-banner.hide { opacity: 0; }
 #stream-status { position: absolute; right: 30px; top: 20px; z-index: 50; padding: 8px 14px; background: rgba(123,28,23,.9); color: #fff; font-size: 16px; letter-spacing: .03em; }
+/* Fixed preview size: the 2017 Samsung browser can't size video from a flex box, so give it exact pixels. */
+.tv-screen .preview, .preview { -webkit-flex: none; flex: none; width: 560px; height: 315px; overflow: hidden; }
+.preview-stream { width: 560px; height: 315px; overflow: hidden; }
+.preview-stream .stream { width: 560px; height: 315px; }
+.player-stream .stream { width: 1920px; height: 1080px; }
+.now { -webkit-justify-content: flex-start; justify-content: flex-start; }
+
+/* Live TV: show the order (category first, then channel) */
+.step-no { display: inline-block; width: 26px; height: 26px; line-height: 26px; margin-right: 12px; border-radius: 50%; border: 1px solid #d6c4a5; color: #d6c4a5; text-align: center; font-size: 13px; letter-spacing: 0; }
+.tv-body .rail, .tv-body .channels { -webkit-transition: opacity .25s; transition: opacity .25s; }
+.tv-body.in-cats .channels { opacity: .45; }
+.tv-body.in-channels .rail { opacity: .45; }
+.tv-body.in-cats .rail .col-head, .tv-body.in-channels .channels .col-head { color: #d6c4a5; }
+.tv-body.in-cats .rail .step-no, .tv-body.in-channels .channels .step-no { background: #d6c4a5; color: #050505; }
+.tv-hint { margin-top: 16px; }
+.col-title { font-weight: 500; }
+.col-head .col-title .step-no { font-size: 13px; letter-spacing: 0; color: #d6c4a5; }
+.tv-body.in-cats .rail .step-no, .tv-body.in-channels .channels .step-no { color: #050505; }
