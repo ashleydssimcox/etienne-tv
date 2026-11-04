@@ -40,8 +40,6 @@ var ETIENNE_CONFIG = {
       { name: 'Thai PBS', detail: 'National · Live', short: 'TP', streams: [
         { type: 'hls', url: 'https://thaipbs-live.cdn.byteark.com/live/playlist.m3u8' },
         { type: 'youtube', channel: 'UC5TOFhyb_LxL2VG_Zenhpzw' } ] },
-      { name: 'ALTV', detail: 'Thai PBS learning channel · Live', short: 'AL', streams: [
-        { type: 'hls', url: 'https://thaipbs-ujxrch.cdn.byteark.com/live/playlist.m3u8' } ] },
       { name: 'MCOT HD', detail: 'National · Live', short: 'MC', streams: [
         { type: 'hls', url: 'https://mcothd-streaming-edge-cdn.mcot.net/tencentmcot/smil:tencentmcot.smil/playlist.m3u8' } ] },
       { name: 'TNN 16', detail: 'News · Live', short: 'TNN', streams: [{ type: 'youtube', channel: 'UCN-5TkXd9PVabsRecrMSfWg' }] },

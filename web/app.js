@@ -50,10 +50,15 @@
     }
     var i = 0;
     // Test build: a status line shows what each stream is doing, so a TV that can't play one tells us why.
+    // Test build: the red box lists every attempt for this channel, so one photo shows why it failed.
+    var log = [];
     function status(msg) {
       var s = document.getElementById('stream-status');
       if (!s) { s = document.createElement('div'); s.id = 'stream-status'; document.getElementById('stage').appendChild(s); }
-      s.innerHTML = esc(msg);
+      var head = msg.split(' · try ')[1] ? msg.split(') ')[0] + ')' : '';
+      if (log.length && head && log[log.length - 1].indexOf(head) === 0) log[log.length - 1] = msg; else log.push(msg);
+      if (log.length > 10) log.shift();
+      s.innerHTML = 'hls.js: ' + (hlsReady ? 'ready' : 'not loaded') + '<br>' + esc(log.join('\n')).replace(/\n/g, '<br>');
     }
     function attempt() {
       stopHls();

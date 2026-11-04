@@ -195,3 +195,4 @@ video.stream { object-fit: cover; }
 .tvx .channel-copy small, .side .cat small { font-size: 14px; color: rgba(244,242,237,.78); }
 .side .cat.focused { background: #2b2418; }
 .button.focused { background: #d6c4a5; color: #050505; outline: 0; }
+#stream-status { text-align: left; line-height: 1.5; max-width: 900px; font-size: 15px; }
