@@ -47,7 +47,7 @@
       var v = el.querySelector('video'), f = el.querySelector('iframe'), playing = false;
       if (v) {
         // A stream that hasn't started after 12 seconds counts as failed: move on to the next one.
-        var guard = setTimeout(function () { if (!playing && el.contains(v)) { status(ch.name + ' · try ' + tries + ' (hls) timed out'); attempt(); } }, 12000);
+        var guard = setTimeout(function () { if (!playing && el.contains(v)) { status(ch.name + ' · try ' + tries + ' (hls) timed out'); attempt(); } }, 8000);
         v.addEventListener('playing', function () { playing = true; clearTimeout(guard); });
         v.addEventListener('error', function () { status(ch.name + ' · try ' + tries + ' (hls) error ' + (v.error ? v.error.code : '?')); setTimeout(attempt, 800); });
         v.addEventListener('playing', function () { status(ch.name + ' · try ' + tries + ' (hls) playing'); });

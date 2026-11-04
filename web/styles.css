@@ -178,3 +178,11 @@ video.stream { object-fit: cover; }
 .tvx .channel { -webkit-flex: none; flex: none; height: 118px; margin-top: 0; margin-bottom: 12px; }
 .tvx[data-col="cats"] .tv-main { opacity: .5; }
 .tvx[data-col="channels"] .side .cat.active { background: rgba(214,196,165,.08); }
+
+/* Readable highlight on older TVs: gold outline, white text */
+.side .cat.focused { background: rgba(214,196,165,.22); outline: 3px solid #d6c4a5; color: #fff; }
+.side .cat.focused strong { color: #fff; }
+.side .cat.focused small { color: rgba(255,255,255,.8); }
+.side .cat.focused .cat-arrow { color: #d6c4a5; opacity: 1; }
+.side .cat { height: 92px; }
+.tvx .channel { height: 104px; margin-bottom: 10px; }
