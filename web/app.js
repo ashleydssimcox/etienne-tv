@@ -418,6 +418,14 @@
   }
 
   // ---------- remote ----------
+  // Catch Back before anything else on the page (or TizenBrew) can act on it.
+  window.addEventListener('keydown', function (e) {
+    if (Platform.keys.back.indexOf(e.keyCode) !== -1 && !state.staff && state.screen === 'home') {
+      e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      openStaff(true);
+    }
+  }, true);
+  document.addEventListener('tizenhwkey', function (e) { if (e.keyName === 'back' && !state.staff) { openStaff(true); } });
   document.addEventListener('keydown', function (e) {
     var k = e.keyCode, K = Platform.keys;
     if (k === 403) { openStaff(); e.preventDefault(); return; }

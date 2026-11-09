@@ -10,11 +10,33 @@ function send(res, ok, msg) {
   res.end(JSON.stringify({ ok: ok, msg: msg }));
 }
 
+// Fallback: ask the TV's developer bridge (the same route TizenBrew itself uses) to start the app.
+// A background service isn't always allowed to open apps directly, but this route is.
+function sdbExecute(id, cb) {
+  try {
+    var adbhost = require('adbhost');
+    var c = adbhost.createConnection({ host: '127.0.0.1', port: 26101 }), done = false;
+    function finish(ok, msg) { if (done) return; done = true; try { c._stream.end(); } catch (e) {} cb(ok, msg); }
+    c._stream.on('connect', function () {
+      var sh = c.createStream('shell:0 execute ' + id), out = '';
+      sh.on('data', function (d) { out += d.toString(); });
+      setTimeout(function () { finish(!/fail|error|not found/i.test(out), out.replace(/\s+/g, ' ').trim() || 'sent'); }, 2500);
+    });
+    c._stream.on('error', function (e) { finish(false, 'bridge: ' + e); });
+    setTimeout(function () { finish(false, 'bridge timed out'); }, 8000);
+  } catch (e) { cb(false, 'bridge: ' + e.message); }
+}
+
 function launch(ids, uri, res) {
   var i = 0, errors = [];
   function next(err) {
     if (err) errors.push(err);
-    if (i >= ids.length) { send(res, false, errors.join(' / ') || 'no app id'); return; }
+    if (i >= ids.length) {
+      if (!ids.length) { send(res, false, 'no app id'); return; }
+      // Every direct attempt failed: try the developer bridge with the first (best) match.
+      sdbExecute(ids[0], function (ok, msg) { send(res, ok, ok ? ids[0] + ' via bridge (' + msg + ')' : errors.concat(msg).join(' / ')); });
+      return;
+    }
     var id = ids[i++];
     try {
       if (uri && tizen.ApplicationControl) {
