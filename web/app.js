@@ -357,18 +357,8 @@
 
   // ---------- staff menu: Red button, or Up five times on the home screen ----------
   function openStaff(exiting) { state.staff = { pin: '', exiting: !!exiting }; render(state.screen); }
-  // Leaving the villa screen needs the staff PIN. Two extra history entries catch the TV's Back key,
-  // which would otherwise take the browser back out of the app.
-  var allowExit = false;
-  try { history.pushState({ etienne: 1 }, '', location.href); history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
-  var lastBackKey = 0;
-  window.addEventListener('popstate', function () {
-    if (allowExit) return;
-    try { history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
-    if (new Date().getTime() - lastBackKey < 800) return;   // the Back key was already handled
-    if (state.staff) return;
-    if (state.screen === 'home') openStaff(true); else back();
-  });
+  // Leaving the villa screen needs the staff PIN: Back on the home screen opens it (see back()).
+  var allowExit = false, lastBackKey = 0;
   function staffHtml() {
     var s = state.staff, html = '<div class="overlay"><div class="panel' + (s.apps ? ' wide' : '') + '">';
     if (!s.ok) {
@@ -408,7 +398,7 @@
   }
   function staffAction(a) {
     if (a === 'close') { state.staff = null; render(state.screen); }
-    else if (a === 'exit') { allowExit = true; Platform.exitApp(); try { history.go(-3); } catch (e) {} }
+    else if (a === 'exit') { allowExit = true; Platform.exitApp(); try { history.back(); } catch (e) {} }
     else if (a === 'reset') toast(Platform.resetForNextGuest());
     else if (a === 'settings') Platform.openSettings();
     else if (a === 'apps') {
@@ -424,12 +414,8 @@
   // Catch Back before anything else on the page (or TizenBrew) can act on it.
   window.addEventListener('keydown', function (e) {
     if (Platform.keys.back.indexOf(e.keyCode) !== -1) lastBackKey = new Date().getTime();
-    if (Platform.keys.back.indexOf(e.keyCode) !== -1 && !state.staff && state.screen === 'home') {
-      e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-      openStaff(true);
-    }
+    if (Platform.keys.back.indexOf(e.keyCode) !== -1) e.preventDefault();
   }, true);
-  document.addEventListener('tizenhwkey', function (e) { if (e.keyName === 'back' && !state.staff) { openStaff(true); } });
   document.addEventListener('keydown', function (e) {
     var k = e.keyCode, K = Platform.keys;
     if (k === 403) { openStaff(); e.preventDefault(); return; }
