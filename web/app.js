@@ -381,7 +381,11 @@
     var s = state.staff;
     if (k === 'Clear') s.pin = '';
     else if (k === 'OK') { if (s.pin === String(C.staffPin)) s.ok = true; else { s.pin = ''; toast('Wrong PIN'); } }
-    else if (s.pin.length < 8) s.pin += k;
+    else if (s.pin.length < 8) {
+      s.pin += k;
+      // The full PIN unlocks straight away, no need to press OK.
+      if (s.pin === String(C.staffPin)) s.ok = true;
+    }
     render(state.screen, s.ok ? null : 'key-' + k);
   }
   function staffAction(a) {
@@ -395,6 +399,10 @@
   document.addEventListener('keydown', function (e) {
     var k = e.keyCode, K = Platform.keys;
     if (k === 403) { openStaff(); e.preventDefault(); return; }
+    // Number buttons on the remote type straight into the PIN box.
+    if (state.staff && !state.staff.ok && ((k >= 48 && k <= 57) || (k >= 96 && k <= 105))) {
+      pinKey(String(k >= 96 ? k - 96 : k - 48)); e.preventDefault(); return;
+    }
     if (k === K.up && state.screen === 'home' && !state.staff) {
       if (!move('up')) { state.upCount++; if (state.upCount >= 5) { state.upCount = 0; openStaff(); } }
       e.preventDefault(); return;

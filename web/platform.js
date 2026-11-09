@@ -43,6 +43,7 @@ var Platform = (function () {
     registerKeys: function () {
       if (kind !== 'tizen' || !tizen.tvinputdevice) return;
       try { tizen.tvinputdevice.registerKey('MediaPlayPause'); } catch (e) {}
+      for (var n = 0; n <= 9; n++) { try { tizen.tvinputdevice.registerKey(String(n)); } catch (e) {} }
     },
 
     // Opens a streaming app. done(true) when it opened.
