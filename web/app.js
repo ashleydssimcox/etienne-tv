@@ -195,10 +195,27 @@
       var cards = '';
       for (var i = 0; i < C.music.length; i++) {
         var m = C.music[i];
-        cards += '<div class="card focusable" id="music-' + i + '" data-act="spotify"><span class="logo">0' + (i + 1) + '</span><i>▶</i><span><small>' + esc(m.eyebrow) + '</small><strong>' + esc(m.name) + '</strong></span></div>';
+        cards += '<div class="card music-card focusable" id="music-' + i + '" data-act="playlist" data-arg="' + i + '">' +
+          '<span class="music-no">0' + (i + 1) + '</span><i>' + (m.spotify ? '▶' : '') + '</i>' +
+          '<span><small>' + esc(m.eyebrow) + '</small><strong>' + esc(m.name) + '</strong><p class="card-desc">' + esc(m.description || '') + '</p>' +
+          (m.spotify ? '' : '<em class="soon">Coming soon</em>') + '</span></div>';
       }
-      cards += '<div class="card focusable" id="music-sp" data-act="spotify"><span class="logo">Spotify</span><i>↗</i><span><small>Your music</small><strong>Spotify</strong></span></div>';
-      return '<div class="screen page">' + header() + title('Set the mood', 'Music') + '<div class="cards">' + cards + '</div></div>';
+      cards += '<div class="card music-card own-card focusable" id="music-own" data-act="go" data-arg="ownmusic"><span class="music-no">♪</span><i>→</i>' +
+        '<span><small>From your phone</small><strong>Play your own music</strong><p class="card-desc">Spotify, Apple Music or anything on your phone.</p></span></div>';
+      return '<div class="screen page">' + header() + title('Set the mood', 'Music') + '<div class="cards music-cards">' + cards + '</div>' +
+        '<p class="tv-hint"><span class="kbd">OK</span>Play<span class="kbd">BACK</span>Home</p></div>';
+    },
+
+    ownmusic: function () {
+      return '<div class="screen page">' + header() + title('From your phone', 'Play your own music') +
+        '<div class="share"><div class="share-col"><span class="device">S</span><h2>Spotify</h2><ol>' +
+        '<li>Join the villa Wi-Fi.</li><li>On this TV, open <b>Streaming</b>, then <b>Spotify</b>.</li>' +
+        '<li>On your phone, open Spotify and start a song.</li><li>Tap the <b>speaker icon</b> at the bottom of the screen.</li>' +
+        '<li>Choose <b class="room-name">' + esc(C.roomName) + '</b>.</li></ol></div>' +
+        '<div class="share-col"><span class="device">iOS</span><h2>Apple Music &amp; others</h2><ol>' +
+        '<li>Join the villa Wi-Fi.</li><li>Start playing on your iPhone or iPad.</li><li>Tap the <b>AirPlay icon</b>.</li>' +
+        '<li>Choose <b class="room-name">' + esc(C.roomName) + '</b>.</li></ol></div></div>' +
+        '<p class="tv-hint"><span class="kbd">BACK</span>Music</p></div>';
     },
 
     player: function () {
@@ -304,6 +321,11 @@
     }
     else if (act === 'app') openApp(C.apps[+arg]);
     else if (act === 'spotify') openApp(findApp('spotify'));
+    else if (act === 'playlist') {
+      var pl = C.music[+arg];
+      if (!pl.spotify) { toast(pl.name + ' is coming soon.'); return; }
+      Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok) { if (!ok) toast('Spotify isn’t installed on this TV yet.'); });
+    }
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);
   }
@@ -327,6 +349,7 @@
   function back() {
     if (state.staff) { state.staff = null; render(state.screen); return; }
     if (state.screen === 'player') { render('tv', 'ch-' + state.channel); return; }
+    if (state.screen === 'ownmusic') { render('music', 'music-own'); return; }
     if (state.screen !== 'home') activate(document.getElementById('back'));
   }
 

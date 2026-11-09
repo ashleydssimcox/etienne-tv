@@ -214,3 +214,12 @@ video.stream { object-fit: cover; }
 /* Clearer "Koh Samui · Thailand" above The Étienne, and under the clock */
 .brand-location { font-size: 14px; font-weight: 700; letter-spacing: .4em; color: rgba(244,242,237,.88); margin-bottom: 10px; }
 .clock small { font-size: 13px; font-weight: 700; letter-spacing: .25em; color: rgba(244,242,237,.8); }
+
+/* Music */
+.music-cards .card { height: 300px; }
+.music-no { font-size: 48px; font-weight: 200; color: #d6c4a5; letter-spacing: -.03em; }
+.card-desc { margin: 10px 0 0; color: rgba(244,242,237,.78); font: italic 18px/1.45 Georgia, serif; }
+.soon { display: inline-block; margin-top: 12px; padding: 4px 10px; border: 1px solid rgba(214,196,165,.6); color: #d6c4a5; font-style: normal; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+.own-card { background: #1d1913; border-color: rgba(214,196,165,.55); }
+.page .tv-hint { margin-top: 10px; }
+.card.focused { background: #2b2418; outline: 3px solid #d6c4a5; }

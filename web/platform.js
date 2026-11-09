@@ -37,6 +37,28 @@ var Platform = (function () {
       done(false);
     },
 
+    // Opens a Spotify playlist link in the Spotify app. Falls back to opening Spotify itself.
+    openSpotify: function (app, link, done) {
+      done = done || function () {};
+      var self = this;
+      if (!link) { self.launchApp(app, done); return; }
+      var uri = link.replace(/^https?:\/\/open\.spotify\.com\//, 'spotify:').replace(/\?.*$/, '').replace(/\//g, ':');
+      if (kind === 'android' && native.openUri) { done(!!native.openUri(uri)); return; }
+      if (kind === 'tizen' && tizen.application.launchAppControl && window.ApplicationControl) {
+        var ids = app.tizen || [], i = 0;
+        var next = function () {
+          if (i >= ids.length) { self.launchApp(app, done); return; }
+          var id = ids[i++];
+          try {
+            var ctl = new window.ApplicationControl('http://tizen.org/appcontrol/operation/view', uri, null, null, null);
+            tizen.application.launchAppControl(ctl, id, function () { done(true); }, function () { next(); }, null);
+          } catch (e) { next(); }
+        };
+        next(); return;
+      }
+      done(false);
+    },
+
     // Live TV through the TV's own tuner.
     watchLiveTv: function (channel, done) {
       done = done || function () {};

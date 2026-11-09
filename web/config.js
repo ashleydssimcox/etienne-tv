@@ -85,11 +85,13 @@ var ETIENNE_CONFIG = {
       { name: 'Film Asia', detail: 'Asian cinema', short: 'FA' } ] }
   },
 
+  // Villa playlists. Paste each Spotify playlist link into "spotify" once the playlist exists
+  // (Spotify: ⋯ > Share > Copy link). Empty means the card shows "Coming soon".
   music: [
-    { name: 'The Étienne', eyebrow: 'Signature playlist' },
-    { name: 'Poolside', eyebrow: 'Balearic & downtempo' },
-    { name: 'Sunset', eyebrow: 'Golden hour' },
-    { name: 'After Dark', eyebrow: 'Lounge & jazz' }
+    { name: 'The Étienne', eyebrow: 'Signature playlist', description: 'Warm, atmospheric selections curated for the villa.', spotify: '' },
+    { name: 'Poolside', eyebrow: 'Balearic & downtempo', description: 'Unhurried rhythms for long afternoons by the water.', spotify: '' },
+    { name: 'Sunset', eyebrow: 'Golden hour', description: 'Soulful selections as the light softens over Samui.', spotify: '' },
+    { name: 'After Dark', eyebrow: 'Lounge & jazz', description: 'A restrained late-evening soundtrack.', spotify: '' }
   ],
 
   qrPages: {
