@@ -357,7 +357,7 @@
   // ---------- staff menu: Red button, or Up five times on the home screen ----------
   function openStaff() { state.staff = { pin: '' }; render(state.screen); }
   function staffHtml() {
-    var s = state.staff, html = '<div class="overlay"><div class="panel">';
+    var s = state.staff, html = '<div class="overlay"><div class="panel' + (s.apps ? ' wide' : '') + '">';
     if (!s.ok) {
       html += '<p class="kicker">Staff only</p><h2>Enter PIN</h2><div class="pin">' + new Array(s.pin.length + 1).join('•') + '</div><div class="keypad">';
       var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', 'OK'];
