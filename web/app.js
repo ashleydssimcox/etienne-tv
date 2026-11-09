@@ -200,7 +200,7 @@
           '<span><small>' + esc(m.eyebrow) + '</small><strong>' + esc(m.name) + '</strong><p class="card-desc">' + esc(m.description || '') + '</p>' +
           (m.spotify ? '' : '<em class="soon">Coming soon</em>') + '</span></div>';
       }
-      cards += '<div class="card music-card own-card focusable" id="music-own" data-act="go" data-arg="ownmusic"><span class="music-no">♪</span><i>→</i>' +
+      cards += '<div class="card music-card own-card focusable" id="music-own" data-act="go" data-arg="ownmusic"><span class="own-icon">♪</span><i>→</i>' +
         '<span><small>From your phone</small><strong>Play your own music</strong><p class="card-desc">Spotify, Apple Music or anything on your phone.</p></span></div>';
       return '<div class="screen page">' + header() + title('Set the mood', 'Music') + '<div class="cards music-cards">' + cards + '</div>' +
         '<p class="tv-hint"><span class="kbd">OK</span>Play<span class="kbd">BACK</span>Home</p></div>';
