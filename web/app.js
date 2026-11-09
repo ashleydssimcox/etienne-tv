@@ -361,10 +361,13 @@
   // which would otherwise take the browser back out of the app.
   var allowExit = false;
   try { history.pushState({ etienne: 1 }, '', location.href); history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
+  var lastBackKey = 0;
   window.addEventListener('popstate', function () {
     if (allowExit) return;
     try { history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
-    if (!state.staff) openStaff(true);
+    if (new Date().getTime() - lastBackKey < 800) return;   // the Back key was already handled
+    if (state.staff) return;
+    if (state.screen === 'home') openStaff(true); else back();
   });
   function staffHtml() {
     var s = state.staff, html = '<div class="overlay"><div class="panel' + (s.apps ? ' wide' : '') + '">';
@@ -420,6 +423,7 @@
   // ---------- remote ----------
   // Catch Back before anything else on the page (or TizenBrew) can act on it.
   window.addEventListener('keydown', function (e) {
+    if (Platform.keys.back.indexOf(e.keyCode) !== -1) lastBackKey = new Date().getTime();
     if (Platform.keys.back.indexOf(e.keyCode) !== -1 && !state.staff && state.screen === 'home') {
       e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation();
       openStaff(true);

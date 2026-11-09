@@ -18,9 +18,12 @@ function sdbExecute(id, cb) {
     var c = adbhost.createConnection({ host: '127.0.0.1', port: 26101 }), done = false;
     function finish(ok, msg) { if (done) return; done = true; try { c._stream.end(); } catch (e) {} cb(ok, msg); }
     c._stream.on('connect', function () {
-      var sh = c.createStream('shell:0 execute ' + id), out = '';
-      sh.on('data', function (d) { out += d.toString(); });
-      setTimeout(function () { finish(!/fail|error|not found/i.test(out), out.replace(/\s+/g, ' ').trim() || 'sent'); }, 2500);
+      try {
+        var sh = c.createStream('shell:0 execute ' + id), out = '';
+        sh.on('data', function (d) { out += d.toString(); });
+        sh.on('error', function (e) { finish(false, 'bridge: ' + e); });
+        setTimeout(function () { finish(!/fail|error|not found/i.test(out), out.replace(/\s+/g, ' ').trim() || 'sent'); }, 2500);
+      } catch (e) { finish(false, 'bridge: ' + e.message); }
     });
     c._stream.on('error', function (e) { finish(false, 'bridge: ' + e); });
     setTimeout(function () { finish(false, 'bridge timed out'); }, 8000);
