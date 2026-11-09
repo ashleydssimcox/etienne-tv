@@ -89,10 +89,10 @@ var ETIENNE_CONFIG = {
   // (Spotify: ⋯ > Share > Copy link). Empty means the card shows "Coming soon".
   music: [
     { name: 'The Étienne', eyebrow: 'Signature playlist', description: 'Warm, atmospheric selections curated for the villa.', spotify: 'https://open.spotify.com/playlist/3LkvQD2JPf8VLoQrBq2Knx' },
-    { name: 'Morning', eyebrow: 'Slow mornings', description: 'Gentle acoustic sounds to ease into the day.', spotify: '' },
-    { name: 'Poolside', eyebrow: 'Balearic & downtempo', description: 'Unhurried rhythms for long afternoons by the water.', spotify: '' },
-    { name: 'Sunset', eyebrow: 'Golden hour', description: 'Soulful selections as the light softens over Samui.', spotify: '' },
-    { name: 'After Dark', eyebrow: 'Lounge & jazz', description: 'A restrained late-evening soundtrack.', spotify: '' }
+    { name: 'Morning', eyebrow: 'Slow mornings', description: 'Gentle acoustic sounds to ease into the day.', spotify: 'https://open.spotify.com/playlist/0w7Ku0rzwGQb9jnLKkvFbW' },
+    { name: 'Poolside', eyebrow: 'Balearic & downtempo', description: 'Unhurried rhythms for long afternoons by the water.', spotify: 'https://open.spotify.com/playlist/6wHI42UbkT9aKLESegneI2' },
+    { name: 'Sunset', eyebrow: 'Golden hour', description: 'Soulful selections as the light softens over Samui.', spotify: 'https://open.spotify.com/playlist/5ETz4oScKYkbiqlicJ0fjx' },
+    { name: 'After Dark', eyebrow: 'Lounge & jazz', description: 'A restrained late-evening soundtrack.', spotify: 'https://open.spotify.com/playlist/3krLgXHpkncQmg1myfHFnn' }
   ],
 
   qrPages: {
