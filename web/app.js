@@ -307,7 +307,7 @@
   function findApp(key) { for (var i = 0; i < C.apps.length; i++) if (C.apps[i].key === key) return C.apps[i]; return null; }
   function openApp(a) {
     if (!a) return;
-    Platform.launchApp(a, function (ok) { if (!ok) toast(a.name + ' isn’t installed on this TV yet.'); });
+    Platform.launchApp(a, function (ok, why) { if (!ok) toast(a.name + ' couldn’t open (' + (why || 'unknown') + ')'); });
   }
   function activate(el) {
     if (!el) return;
@@ -325,7 +325,7 @@
     else if (act === 'playlist') {
       var pl = C.music[+arg];
       if (!pl.spotify) { toast(pl.name + ' is coming soon.'); return; }
-      Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok) { if (!ok) toast('Spotify isn’t installed on this TV yet.'); });
+      Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok, why) { if (!ok) toast('Spotify couldn’t open (' + (why || 'unknown') + ')'); });
     }
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);
@@ -352,14 +352,24 @@
     if (state.screen === 'player') { render('tv', 'ch-' + state.channel); return; }
     if (state.screen === 'ownmusic') { render('music', 'music-own'); return; }
     if (state.screen !== 'home') activate(document.getElementById('back'));
+    else openStaff(true);
   }
 
   // ---------- staff menu: Red button, or Up five times on the home screen ----------
-  function openStaff() { state.staff = { pin: '' }; render(state.screen); }
+  function openStaff(exiting) { state.staff = { pin: '', exiting: !!exiting }; render(state.screen); }
+  // Leaving the villa screen needs the staff PIN. Two extra history entries catch the TV's Back key,
+  // which would otherwise take the browser back out of the app.
+  var allowExit = false;
+  try { history.pushState({ etienne: 1 }, '', location.href); history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
+  window.addEventListener('popstate', function () {
+    if (allowExit) return;
+    try { history.pushState({ etienne: 2 }, '', location.href); } catch (e) {}
+    if (!state.staff) openStaff(true);
+  });
   function staffHtml() {
     var s = state.staff, html = '<div class="overlay"><div class="panel' + (s.apps ? ' wide' : '') + '">';
     if (!s.ok) {
-      html += '<p class="kicker">Staff only</p><h2>Enter PIN</h2><div class="pin">' + new Array(s.pin.length + 1).join('•') + '</div><div class="keypad">';
+      html += '<p class="kicker">Staff only</p><h2>' + (s.exiting ? 'Enter PIN to exit' : 'Enter PIN') + '</h2><div class="pin">' + new Array(s.pin.length + 1).join('•') + '</div><div class="keypad">';
       var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', 'OK'];
       for (var i = 0; i < keys.length; i++) html += '<div class="key focusable" id="key-' + keys[i] + '" data-act="pin" data-arg="' + keys[i] + '">' + keys[i] + '</div>';
       html += '</div>';
@@ -377,6 +387,7 @@
         html += '<p class="muted">Settings lock and guest reset only work on the Sony (Google TV) version.</p>';
       }
       if (Platform.kind === 'tizenbrew') html += '<div class="button focusable" id="st-apps" data-act="staff" data-arg="apps">' + (s.apps ? 'Next page of apps' : 'Show installed apps') + ' <span>→</span></div>';
+      html += '<div class="button focusable" id="st-exit" data-act="staff" data-arg="exit">Exit to the TV menu <span>→</span></div>';
       html += '<div class="button focusable" id="st-close" data-act="staff" data-arg="close">Close <span>→</span></div>';
     }
     return html + '</div></div>';
@@ -394,6 +405,7 @@
   }
   function staffAction(a) {
     if (a === 'close') { state.staff = null; render(state.screen); }
+    else if (a === 'exit') { allowExit = true; Platform.exitApp(); try { history.go(-3); } catch (e) {} }
     else if (a === 'reset') toast(Platform.resetForNextGuest());
     else if (a === 'settings') Platform.openSettings();
     else if (a === 'apps') {
