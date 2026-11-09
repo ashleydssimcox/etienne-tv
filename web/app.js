@@ -365,14 +365,18 @@
       html += '</div>';
     } else {
       html += '<p class="kicker">Staff only</p><h2>Villa TV</h2><p class="muted">Platform: ' + Platform.kind + ' · Helper: <span id="helper-status">checking</span></p>';
-      if (s.apps) html += '<div class="app-list">' + esc(s.apps).replace(/\n/g, '<br>') + '</div>';
+      if (s.apps) {
+        var all = s.apps.split('\n'), per = 44, pages = Math.max(1, Math.ceil(all.length / per)), pg = s.page || 0;
+        html += '<p class="muted">Installed apps · page ' + (pg + 1) + ' of ' + pages + '</p><div class="app-list">' +
+          esc(all.slice(pg * per, pg * per + per).join('\n')).replace(/\n/g, '<br>') + '</div>';
+      }
       if (Platform.canLock()) {
         html += '<div class="button focusable" id="st-reset" data-act="staff" data-arg="reset">Reset for next guest <span>→</span></div>' +
           '<div class="button focusable" id="st-settings" data-act="staff" data-arg="settings">Open TV settings <span>→</span></div>';
       } else {
         html += '<p class="muted">Settings lock and guest reset only work on the Sony (Google TV) version.</p>';
       }
-      if (Platform.kind === 'tizenbrew') html += '<div class="button focusable" id="st-apps" data-act="staff" data-arg="apps">Show installed apps <span>→</span></div>';
+      if (Platform.kind === 'tizenbrew') html += '<div class="button focusable" id="st-apps" data-act="staff" data-arg="apps">' + (s.apps ? 'Next page of apps' : 'Show installed apps') + ' <span>→</span></div>';
       html += '<div class="button focusable" id="st-close" data-act="staff" data-arg="close">Close <span>→</span></div>';
     }
     return html + '</div></div>';
@@ -392,7 +396,13 @@
     if (a === 'close') { state.staff = null; render(state.screen); }
     else if (a === 'reset') toast(Platform.resetForNextGuest());
     else if (a === 'settings') Platform.openSettings();
-    else if (a === 'apps') Platform.listApps(function (list, msg) { state.staff.apps = list ? list.join('\n') : ('Could not list apps: ' + msg); render(state.screen, 'st-apps'); });
+    else if (a === 'apps') {
+      if (state.staff.apps) {
+        var total = Math.ceil(state.staff.apps.split('\n').length / 44);
+        state.staff.page = ((state.staff.page || 0) + 1) % total; render(state.screen, 'st-apps'); return;
+      }
+      Platform.listApps(function (list, msg) { state.staff.apps = list ? list.join('\n') : ('Could not list apps: ' + msg); state.staff.page = 0; render(state.screen, 'st-apps'); });
+    }
   }
 
   // ---------- remote ----------

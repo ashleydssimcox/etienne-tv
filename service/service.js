@@ -39,7 +39,18 @@ var server = http.createServer(function (req, res) {
     if (parsed.pathname === '/ping') { send(res, true, 'ready'); return; }
     if (parsed.pathname === '/launch') {
       var ids = String(q.ids || '').split(',').filter(function (x) { return x; });
-      launch(ids, q.uri || '', res); return;
+      var name = String(q.name || '').toLowerCase();
+      if (!name) { launch(ids, q.uri || '', res); return; }
+      // Look the app up by its name on this TV first, so we don't depend on exact app ids.
+      tizen.application.getAppsInfo(function (list) {
+        var found = [];
+        list.forEach(function (a) {
+          var n = String(a.name || '').toLowerCase();
+          if (n === name || n.indexOf(name) === 0) found.push(a.id);
+        });
+        launch(found.concat(ids.filter(function (x) { return found.indexOf(x) < 0; })), q.uri || '', res);
+      }, function () { launch(ids, q.uri || '', res); });
+      return;
     }
     if (parsed.pathname === '/apps') {
       tizen.application.getAppsInfo(function (list) {

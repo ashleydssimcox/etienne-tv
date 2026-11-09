@@ -18,8 +18,9 @@ var Platform = (function () {
     x.ontimeout = function () { end({ ok: false, msg: 'helper timed out' }); };
     x.send();
   }
-  function brewLaunch(ids, uri, done) {
-    helper('/launch?ids=' + encodeURIComponent(ids.join(',')) + (uri ? '&uri=' + encodeURIComponent(uri) : ''), function (r) { done(!!r.ok, r.msg); });
+  function brewLaunch(ids, uri, done, name) {
+    helper('/launch?ids=' + encodeURIComponent(ids.join(',')) + (name ? '&name=' + encodeURIComponent(name) : '') +
+      (uri ? '&uri=' + encodeURIComponent(uri) : ''), function (r) { done(!!r.ok, r.msg); });
   }
 
   function launchTizen(ids, done) {
@@ -51,7 +52,7 @@ var Platform = (function () {
       done = done || function () {};
       if (kind === 'android') { done(!!native.launchApp(app.android || '')); return; }
       if (kind === 'tizen') { launchTizen(app.tizen || [], done); return; }
-      if (kind === 'tizenbrew') { brewLaunch(app.tizen || [], '', done); return; }
+      if (kind === 'tizenbrew') { brewLaunch(app.tizen || [], '', done, app.tizenName || app.name); return; }
       done(false);
     },
 
@@ -62,7 +63,7 @@ var Platform = (function () {
       if (!link) { self.launchApp(app, done); return; }
       var uri = link.replace(/^https?:\/\/open\.spotify\.com\//, 'spotify:').replace(/\?.*$/, '').replace(/\//g, ':');
       if (kind === 'android' && native.openUri) { done(!!native.openUri(uri)); return; }
-      if (kind === 'tizenbrew') { brewLaunch(app.tizen || [], uri, done); return; }
+      if (kind === 'tizenbrew') { brewLaunch(app.tizen || [], uri, done, app.tizenName || app.name); return; }
       if (kind === 'tizen' && tizen.application.launchAppControl && window.ApplicationControl) {
         var ids = app.tizen || [], i = 0;
         var next = function () {
@@ -83,7 +84,7 @@ var Platform = (function () {
       done = done || function () {};
       if (kind === 'android') { done(!!native.watchLiveTv(channel && channel.id ? String(channel.id) : '')); return; }
       if (kind === 'tizen') { launchTizen(['org.tizen.tv-viewer', 'TVViewer', 'com.samsung.tv.tv-viewer'], done); return; }
-      if (kind === 'tizenbrew') { brewLaunch(['org.tizen.tv-viewer', 'TVViewer', 'com.samsung.tv.tv-viewer'], '', done); return; }
+      if (kind === 'tizenbrew') { brewLaunch(['org.tizen.tv-viewer', 'TVViewer', 'com.samsung.tv.tv-viewer', 'org.tizen.channel-list'], '', done); return; }
       done(false);
     },
 

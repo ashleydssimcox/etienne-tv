@@ -26,9 +26,9 @@ var ETIENNE_CONFIG = {
   apps: [
     { key: 'netflix', name: 'Netflix', eyebrow: 'Films & series', tizen: ['11101200001', '3201907018807'], android: 'com.netflix.ninja' },
     { key: 'youtube', name: 'YouTube', eyebrow: 'Watch & discover', tizen: ['111299001912'], android: 'com.google.android.youtube.tv' },
-    { key: 'disney', name: 'Disney+', eyebrow: 'Stories for everyone', tizen: ['3201901017640'], android: 'com.disney.disneyplus' },
-    { key: 'prime', name: 'Prime Video', eyebrow: 'Movies & originals', tizen: ['3201512006785', '3201910019365'], android: 'com.amazon.amazonvideo.livingroom' },
-    { key: 'max', name: 'Max', eyebrow: 'Premium entertainment', tizen: [], android: 'com.wbd.stream' },
+    { key: 'disney', name: 'Disney+', eyebrow: 'Stories for everyone', tizen: ['fiZNCxMSEA.hotstar', '3201901017640'], android: 'com.disney.disneyplus' },
+    { key: 'prime', name: 'Prime Video', tizenName: 'Amazon', eyebrow: 'Movies & originals', tizen: ['evKhCgZelL.AmazonIgnitionLauncher2', '3201512006785', '3201910019365'], android: 'com.amazon.amazonvideo.livingroom' },
+    { key: 'max', name: 'Max', tizenName: 'HBO Max', eyebrow: 'Premium entertainment', tizen: ['5b8c3eb16b.BeamCTVDev'], android: 'com.wbd.stream' },
     { key: 'spotify', name: 'Spotify', eyebrow: 'Your music', tizen: ['3201606009684'], android: 'com.spotify.tv.android' }
   ],
 
