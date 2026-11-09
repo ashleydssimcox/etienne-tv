@@ -10,7 +10,7 @@ var ETIENNE_CONFIG = {
   weather: { lat: 9.5357, lon: 99.9357 },
 
   // Staff PIN for the hidden staff menu (Android/Sony only: settings, reset for next guest).
-  staffPin: '2580',
+  staffPin: '1042',
 
   homeTiles: [
     { label: 'Live TV', eyebrow: 'Worldwide channels', screen: 'tv' },
