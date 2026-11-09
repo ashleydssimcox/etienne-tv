@@ -259,6 +259,7 @@
     if (state.staff) app.innerHTML += staffHtml();
     var el = focusId && document.getElementById(focusId);
     if (screen !== 'player') focus(el || first());
+    if (state.staff && state.staff.ok) Platform.helperStatus(function (m) { var h = document.getElementById('helper-status'); if (h) h.innerHTML = esc(m); });
   }
   function scope() { return state.staff ? app.querySelector('.overlay') : app; }
   function first() {
@@ -363,13 +364,15 @@
       for (var i = 0; i < keys.length; i++) html += '<div class="key focusable" id="key-' + keys[i] + '" data-act="pin" data-arg="' + keys[i] + '">' + keys[i] + '</div>';
       html += '</div>';
     } else {
-      html += '<p class="kicker">Staff only</p><h2>Villa TV</h2><p class="muted">Platform: ' + Platform.kind + '</p>';
+      html += '<p class="kicker">Staff only</p><h2>Villa TV</h2><p class="muted">Platform: ' + Platform.kind + ' · Helper: <span id="helper-status">checking</span></p>';
+      if (s.apps) html += '<div class="app-list">' + esc(s.apps).replace(/\n/g, '<br>') + '</div>';
       if (Platform.canLock()) {
         html += '<div class="button focusable" id="st-reset" data-act="staff" data-arg="reset">Reset for next guest <span>→</span></div>' +
           '<div class="button focusable" id="st-settings" data-act="staff" data-arg="settings">Open TV settings <span>→</span></div>';
       } else {
         html += '<p class="muted">Settings lock and guest reset only work on the Sony (Google TV) version.</p>';
       }
+      if (Platform.kind === 'tizenbrew') html += '<div class="button focusable" id="st-apps" data-act="staff" data-arg="apps">Show installed apps <span>→</span></div>';
       html += '<div class="button focusable" id="st-close" data-act="staff" data-arg="close">Close <span>→</span></div>';
     }
     return html + '</div></div>';
@@ -385,6 +388,7 @@
     if (a === 'close') { state.staff = null; render(state.screen); }
     else if (a === 'reset') toast(Platform.resetForNextGuest());
     else if (a === 'settings') Platform.openSettings();
+    else if (a === 'apps') Platform.listApps(function (list, msg) { state.staff.apps = list ? list.join('\n') : ('Could not list apps: ' + msg); render(state.screen, 'st-apps'); });
   }
 
   // ---------- remote ----------
