@@ -236,3 +236,4 @@ video.stream { object-fit: cover; }
 /* Welcome: "Welcome to the Johns Residence" */
 .welcome { max-width: 1500px; }
 .welcome h1.long { font-size: 92px; }
+.prepared { margin: 22px 0 0; font-size: 34px; font-weight: 300; letter-spacing: -.01em; color: #d6c4a5; }
