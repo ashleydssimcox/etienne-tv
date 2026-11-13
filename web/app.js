@@ -18,7 +18,7 @@
   function welcomeHtml() {
     var s = state.surname;
     if (!s) return '<h1>Welcome to<br>The Étienne</h1>';
-    return '<h1>Welcome<br>The ' + esc(s) + ' Family</h1><p class="prepared">to Your Private Residence</p>';
+    return '<h1>Welcome<br>The ' + esc(s) + ' Family</h1><p class="prepared">to your private residence</p>';
   }
   function weatherLabel(code) {
     if (code === 0) return 'Clear skies';
@@ -146,7 +146,7 @@
       return '<div class="screen home"><div class="hero"></div>' +
         '<div class="home-header">' + brand() + '<div class="weather"><span class="weather-temp">' + (w ? w.temp + '°' : '29°') + '</span><span><strong>' +
         (w ? weatherLabel(w.code) : 'Koh Samui') + '</strong><small class="js-date">' + longDate() + ' · ' + clock() + '</small></span></div></div>' +
-        '<div class="welcome"><p class="kicker">' + greeting() + '</p>' + welcomeHtml() + '</div>' +
+        '<div class="welcome">' + welcomeHtml() + '</div>' +
         '<div class="tiles">' + tiles + '</div>' +
         '<div class="home-footer"><span>Villa assistance</span><span>' + esc(C.villaPhone) + '</span><span>Press Home on your remote to return here</span></div></div>';
     },
