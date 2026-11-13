@@ -3,7 +3,7 @@
   var C = ETIENNE_CONFIG;
   var app = document.getElementById('app');
   var stage = document.getElementById('stage');
-  var state = { screen: 'home', category: null, channel: 0, weather: null, upCount: 0, staff: null };
+  var state = { surname: null, screen: 'home', category: null, channel: 0, weather: null, upCount: 0, staff: null };
   var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -13,7 +13,14 @@
   function samuiNow() { var d = new Date(); return new Date(d.getTime() + d.getTimezoneOffset() * 60000 + 7 * 3600000); }
   function clock() { var d = samuiNow(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
   function longDate() { var d = samuiNow(); return DAYS[d.getDay()] + ' ' + d.getDate() + ' ' + MONTHS[d.getMonth()]; }
-  function greeting() { var h = samuiNow().getHours(); return h < 5 ? 'Good evening,' : h < 12 ? 'Good morning,' : (h < 18 ? 'Good afternoon,' : 'Good evening,'); }
+  function greeting() { var h = samuiNow().getHours(); return h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening'); }
+  // "Welcome to the Johns Residence" during a stay, "Welcome to The Étienne" between stays.
+  function welcomeHtml() {
+    var s = state.surname;
+    if (!s) return '<h1>Welcome to<br>The Étienne</h1>';
+    var line = esc(s) + ' Residence';
+    return '<h1' + (s.length > 9 ? ' class="long"' : '') + '>Welcome to the<br>' + line + '</h1>';
+  }
   function weatherLabel(code) {
     if (code === 0) return 'Clear skies';
     if (code <= 3) return 'Partly cloudy';
@@ -140,7 +147,7 @@
       return '<div class="screen home"><div class="hero"></div>' +
         '<div class="home-header">' + brand() + '<div class="weather"><span class="weather-temp">' + (w ? w.temp + '°' : '29°') + '</span><span><strong>' +
         (w ? weatherLabel(w.code) : 'Koh Samui') + '</strong><small class="js-date">' + longDate() + ' · ' + clock() + '</small></span></div></div>' +
-        '<div class="welcome"><p class="kicker">Welcome to The Étienne</p><h1>' + greeting() + '<br>' + esc(C.guestName) + '</h1>' +
+        '<div class="welcome"><p class="kicker">' + greeting() + '</p>' + welcomeHtml() +
         '<p class="welcome-note">Everything you need during your stay.</p></div>' +
         '<div class="tiles">' + tiles + '</div>' +
         '<div class="home-footer"><span>Villa assistance</span><span>' + esc(C.villaPhone) + '</span><span>Press Home on your remote to return here</span></div></div>';
@@ -457,6 +464,27 @@
     for (var i = 0; i < els.length; i++) els[i].innerHTML = clock();
     var d = document.querySelector('.js-date'); if (d) d.innerHTML = longDate() + ' · ' + clock();
   }, 15000);
+  // Current guest's surname from ops.theetienne.com. Checked at start, every 5 minutes and
+  // whenever the TV comes back to this screen. If it can't be reached, the last answer stays.
+  function loadGuest() {
+    var x = new XMLHttpRequest();
+    x.open('POST', C.supabaseUrl + '/rest/v1/rpc/get_tv_greeting');
+    x.setRequestHeader('apikey', C.supabaseKey);
+    x.setRequestHeader('Authorization', 'Bearer ' + C.supabaseKey);
+    x.setRequestHeader('Content-Type', 'application/json');
+    x.onload = function () {
+      if (x.status !== 200) return;
+      var s = null;
+      try { s = JSON.parse(x.responseText); } catch (e) { return; }
+      s = (typeof s === 'string' && s) ? s : null;
+      if (s !== state.surname) {
+        state.surname = s;
+        if (state.screen === 'home' && !state.staff) render('home', focused && focused.id);
+      }
+    };
+    x.send('{}');
+  }
+
   function loadWeather() {
     var x = new XMLHttpRequest();
     x.open('GET', 'https://api.open-meteo.com/v1/forecast?latitude=' + C.weather.lat + '&longitude=' + C.weather.lon + '&current=temperature_2m,weather_code&timezone=Asia%2FBangkok');
@@ -467,11 +495,13 @@
   }
 
   // When the TV comes back to this app (after Netflix, mirroring or live TV), start on the home screen.
-  document.addEventListener('visibilitychange', function () { if (!document.hidden && !state.staff) render('home'); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && !state.staff) { render('home'); loadGuest(); } });
 
   Platform.registerKeys();
   fit();
   render('home');
   loadWeather();
   setInterval(loadWeather, 30 * 60000);
+  loadGuest();
+  setInterval(loadGuest, 5 * 60000);
 })();

@@ -1,7 +1,9 @@
 /* The Étienne TV: villa settings. Change things here, not in app.js. */
 var ETIENNE_CONFIG = {
-  // Shown on the welcome screen. Later this comes from the active reservation in ops.theetienne.com.
-  guestName: 'Karoon',
+  // The welcome name comes from the current reservation in ops.theetienne.com
+  // (Supabase function get_tv_greeting). This key is the public "publishable" key, safe to ship.
+  supabaseUrl: 'https://cxryccvdunfmhyhlrfyf.supabase.co',
+  supabaseKey: 'sb_publishable_ZWA3j-rd5XZrBbU5BbpeSg_3T0ck-f7',
 
   // This TV's name, as guests see it in AirPlay and Chromecast lists.
   roomName: 'The Étienne · Lounge',
