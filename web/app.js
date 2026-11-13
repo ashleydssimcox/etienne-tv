@@ -18,7 +18,7 @@
   function welcomeHtml() {
     var s = state.surname;
     if (!s) return '<h1>Welcome to<br>The Étienne</h1>';
-    return '<h1>Welcome<br>The ' + esc(s) + ' Family</h1><p class="prepared">to your private residence</p>';
+    return '<h1>Welcome,<br>The ' + esc(s) + ' Family</h1><p class="prepared">to your private residence</p>';
   }
   function weatherLabel(code) {
     if (code === 0) return 'Clear skies';
