@@ -101,18 +101,18 @@ var ETIENNE_CONFIG = {
   // (menu_items, active rows only). Out-of-stock items stay listed, dimmed and marked Unavailable, as on the phone.
   // "sections" must match menuSections() in etienne-deploy index.html. The Cellar also lists the mini bar's
   // soft drinks that are ticked "show in Cellar".
+  // Shown under every menu. The same wording as the phone menus at order.theetienne.com.
+  menuTaxNote: 'All prices are in Thai Baht (฿) and are subject to 10% service charge and 7% VAT',
+
   dining: [
-    { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'View the menu',
+    { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'Scan to view',
       description: 'A considered selection of refreshments is available in your room and replenished daily for your comfort.',
-      note: 'Every refreshment is yours to enjoy at leisure, and settled discreetly at the close of your stay.',
       sections: [['softs', 'Drinks'], ['snacks', 'Snacks']] },
-    { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Order from your phone',
+    { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Scan to order',
       description: 'A curated selection of wines, spirits and beers, complemented by mixers and soft drinks.',
-      note: 'Make your selection from your phone, and the Villa Team will prepare and serve it wherever you are in the residence.',
       sections: [['wine', 'Wine'], ['spirits', 'Spirits'], ['aperitif', 'Aperitifs'], ['beer', 'Beer'], ['softs', 'Soft Drinks & Mixers']] },
-    { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Request from your phone',
+    { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Scan to reserve',
       description: 'Private experiences throughout your stay, from dining and wellness to days on the water.',
-      note: 'Share your wishes from your phone, and Concierge will personally arrange every detail.',
       sections: [['dining', 'Dining'], ['wellness', 'Wellness'], ['water', 'On the Water'], ['transfers', 'Transfers']] }
   ],
 

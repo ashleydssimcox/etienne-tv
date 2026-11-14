@@ -240,37 +240,35 @@ video.stream { object-fit: cover; }
 .welcome h1.name-xl { font-size: 76px; }
 .prepared { margin: 22px 0 0; font-style: italic; font-size: 34px; font-weight: 300; letter-spacing: -.01em; color: #d6c4a5; }
 
-/* Dining & Experiences: live menus from ops.theetienne.com, set like a printed villa menu */
-/* Dining & Experiences: a printed menu card. Only the three menu names can be selected. */
-.dining-card { padding: 56px 110px 0; background: radial-gradient(circle at 80% 18%, #1b1915 0, #080808 36%, #030303 78%); }
-.dn-head { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: flex-start; align-items: flex-start; padding-bottom: 34px; border-bottom: 1px solid rgba(214,196,165,.28); }
-.dn-left { -webkit-flex: 1; flex: 1; padding-right: 60px; }
-.dining-card .back { display: inline-block; margin: 0 0 30px -10px; }
-.dining-card .kicker { font-size: 15px; font-weight: 700; letter-spacing: .38em; margin-bottom: 18px; }
-.dn-tabs { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; margin-left: -18px; }
-.dn-tab { margin-right: 26px; padding: 4px 18px 10px; border-bottom: 2px solid transparent; font: 300 60px/1.1 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.38); white-space: nowrap; }
-.dn-tab.active { color: #f4f2ed; border-bottom-color: rgba(214,196,165,.55); }
-.dn-tab.focused { color: #fff; background: rgba(214,196,165,.07); border-bottom-color: #d6c4a5; }
-.dn-desc { margin: 22px 0 0; max-width: 900px; color: rgba(244,242,237,.72); font: italic 300 27px/1.4 'Cormorant Garamond', Georgia, serif; }
-.dn-order { display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start; -webkit-flex-shrink: 0; flex-shrink: 0; }
-.dn-order-copy { width: 330px; margin-right: 34px; padding-top: 8px; text-align: right; }
-.dn-order img { display: block; width: 190px; height: 190px; padding: 10px; background: #f1e5d0; }
-.dn-qr-label { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: #d6c4a5; }
-.dn-note { margin: 0; color: rgba(244,242,237,.68); font: italic 300 22px/1.45 'Cormorant Garamond', Georgia, serif; }
-.dn-body { position: relative; height: 640px; overflow: hidden; margin-top: 40px; }
-.dn-cols { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; padding-bottom: 30px; }
-.dn-col { width: 44%; }
-.dn-section { margin: 0 0 18px; padding-top: 30px; font-size: 14px; font-weight: 700; letter-spacing: .38em; text-transform: uppercase; color: #d6c4a5; }
+/* Dining & Experiences: the sidebar of menus, and the menu itself set out like a printed card (text only). */
+.dining .side-title h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 58px; font-weight: 300; letter-spacing: 0; line-height: 1; }
+.dining .side .cat strong { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 38px; font-weight: 400; letter-spacing: 0; margin-bottom: 6px; }
+.dining .tv-main { padding: 60px 90px 34px 96px; }
+.tvx.dining[data-col="cats"] .tv-main { opacity: 1; }
+.dn-top { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: flex-start; align-items: flex-start; padding-bottom: 30px; border-bottom: 1px solid rgba(214,196,165,.3); }
+.dn-heading { -webkit-flex: 1; flex: 1; padding-right: 60px; }
+.dn-title { margin: 0; font: 300 88px/1 'Cormorant Garamond', Georgia, serif; }
+.dn-desc { margin: 16px 0 0; max-width: 820px; color: rgba(244,242,237,.75); font: italic 300 28px/1.4 'Cormorant Garamond', Georgia, serif; }
+.dn-qr { width: 170px; -webkit-flex-shrink: 0; flex-shrink: 0; text-align: center; }
+.dn-qr img { display: block; width: 170px; height: 170px; padding: 9px; background: #f1e5d0; }
+.dn-qr p { margin: 14px 0 0; font-size: 13px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: #d6c4a5; white-space: nowrap; }
+.dn-wrap { position: relative; -webkit-flex: 1; flex: 1; min-height: 0; margin-top: 36px; }
+.dn-body { position: absolute; left: -24px; right: -24px; top: 0; bottom: 0; padding: 0 24px; overflow: hidden; border-left: 3px solid transparent; }
+.dn-body.focused { border-left-color: #d6c4a5; }
+.dn-cols { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; padding-bottom: 40px; }
+.dn-col { width: 45%; }
+.dn-section { margin: 0 0 16px; padding-top: 30px; font-size: 15px; font-weight: 700; letter-spacing: .36em; text-transform: uppercase; color: #d6c4a5; }
 .dn-col .dn-section:first-child { padding-top: 0; }
-.dn-item { margin-bottom: 20px; }
+.dn-item { margin-bottom: 18px; }
 .dn-line { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; }
-.dn-line strong { -webkit-flex: 1; flex: 1; padding-right: 24px; font: 400 31px/1.2 'Cormorant Garamond', Georgia, serif; color: #f4f2ed; }
-.dn-price { font: 400 28px/1.2 'Cormorant Garamond', Georgia, serif; color: #d6c4a5; white-space: nowrap; }
-.dn-item small { display: block; margin-top: 2px; font: italic 300 21px/1.3 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.55); }
+.dn-line strong { -webkit-flex: 1; flex: 1; padding-right: 24px; font: 500 34px/1.2 'Cormorant Garamond', Georgia, serif; color: #f4f2ed; }
+.dn-price { font: 500 31px/1.2 'Cormorant Garamond', Georgia, serif; color: #d6c4a5; white-space: nowrap; }
+.dn-item small { display: block; margin-top: 2px; font: italic 400 23px/1.3 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.6); }
 .dn-item.out strong, .dn-item.out small { color: rgba(244,242,237,.32); }
-.dn-item.out .dn-price { font: 700 12px/1 Helvetica, Arial, sans-serif; letter-spacing: .22em; text-transform: uppercase; color: rgba(244,242,237,.4); }
-.dn-empty { margin: 10px 0; color: rgba(244,242,237,.75); font: italic 300 30px/1.5 'Cormorant Garamond', Georgia, serif; }
-.dn-more { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; margin: 0; padding-top: 104px; text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: rgba(214,196,165,.8); visibility: hidden;
-  background: -webkit-linear-gradient(top, rgba(3,3,3,0), #030303 62%); background: linear-gradient(to bottom, rgba(3,3,3,0), #030303 62%); }
+.dn-item.out .dn-price { font: 700 13px/1 Helvetica, Arial, sans-serif; letter-spacing: .22em; text-transform: uppercase; color: rgba(244,242,237,.42); }
+.dn-empty { margin: 10px 0; color: rgba(244,242,237,.75); font: italic 300 32px/1.5 'Cormorant Garamond', Georgia, serif; }
+.dn-more { position: absolute; left: 0; right: 0; bottom: 0; height: 40px; margin: 0; text-align: center; font-size: 13px; letter-spacing: .24em; text-transform: uppercase; color: rgba(244,242,237,.7); visibility: hidden; pointer-events: none; }
 .dn-more.show { visibility: visible; }
-.dn-more span { margin-left: 8px; }
+.dn-more.fade { height: 130px; padding-top: 90px; background: -webkit-linear-gradient(top, rgba(3,3,3,0), #030303 60%); background: linear-gradient(to bottom, rgba(3,3,3,0), #030303 60%); }
+.dn-more .kbd { margin: 0 10px 0 22px; color: #d6c4a5; }
+.dn-tax { margin: 18px 0 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1); text-align: center; color: rgba(244,242,237,.5); font: italic 400 21px/1.3 'Cormorant Garamond', Georgia, serif; }
