@@ -238,9 +238,9 @@
       var rail = '<div class="side rail">' + brand() + '<div class="side-title"><p class="kicker">At your service</p><h1>Dining &amp; Experiences</h1></div>' +
         '<p class="side-label">Menus</p>';
       for (var i = 0; i < menus.length; i++) {
-        var mm = menus[i], n = state.menuItems ? menuItems(mm).length : null;
+        var mm = menus[i];
         rail += '<div class="cat focusable' + (mm.key === m.key ? ' active' : '') + '" id="menu-' + i + '" data-act="menu" data-arg="' + mm.key + '">' +
-          '<span class="cat-copy"><strong>' + esc(mm.name) + '</strong><small>' + (n === null ? esc(mm.eyebrow) : n + ' item' + (n === 1 ? '' : 's')) + '</small></span><span class="cat-arrow">›</span></div>';
+          '<span class="cat-copy"><strong>' + esc(mm.name) + '</strong><small>' + esc(mm.eyebrow) + '</small></span><span class="cat-arrow">›</span></div>';
       }
       rail += '<div class="side-foot"><div class="back home-btn focusable" id="back" data-act="home"><span>←</span>Back to home</div></div></div>';
 
@@ -250,21 +250,20 @@
         var groups = menuSections(m), idx = 0;
         if (!groups.length) list += '<p class="menu-empty">This menu is being prepared. Please ask your Villa Host.</p>';
         for (var g = 0; g < groups.length; g++) {
-          list += '<p class="menu-section">' + esc(groups[g][0]) + '</p>';
+          list += '<p class="menu-section"><span>' + esc(groups[g][0]) + '</span></p>';
           for (var j = 0; j < groups[g][1].length; j++) {
             var it = groups[g][1][j], out = it.in_stock === false;
             list += '<div class="menu-item focusable' + (out ? ' out' : '') + '" id="mi-' + (idx++) + '" data-act="item"' + (out ? ' data-arg="out"' : '') + '>' +
-              '<span class="menu-copy"><strong>' + esc(it.name) + '</strong>' + (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</span>' +
-              (out ? '<span class="menu-out">Unavailable</span>' : '') + '<span class="menu-price">฿' + baht(it.price) + '</span></div>';
+              '<span class="menu-line"><strong>' + esc(it.name) + '</strong><span class="menu-price">' + (out ? 'Unavailable' : baht(it.price)) + '</span></span>' +
+              (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</div>';
           }
         }
       }
       list += '</div>';
-      var order = '<div class="menu-order"><p class="kicker">' + esc(m.qrLabel) + '</p><img src="' + qr(m.url) + '" alt=""><p class="menu-note">' + esc(m.note) + '</p></div>';
+      var order = '<div class="menu-order"><img src="' + qr(m.url) + '" alt=""><p class="menu-qr-label">' + esc(m.qrLabel) + '</p><p class="menu-note">' + esc(m.note) + '</p></div>';
       var main = '<div class="tv-main"><div class="tv-top"><div><p class="kicker">' + esc(m.eyebrow) + '</p><h2 class="cat-title">' + esc(m.name) +
         '</h2><p class="menu-desc">' + esc(m.description) + '</p></div><div class="clock"><span class="js-clock">' + clock() + '</span><small>Koh Samui</small></div></div>' +
-        '<div class="tv-content">' + list + order + '</div>' +
-        '<p class="tv-hint"><span class="kbd">◀ ▶</span>Switch between menus and items<span class="kbd">▲ ▼</span>Browse<span class="kbd">BACK</span>Home</p></div>';
+        '<div class="tv-content">' + list + order + '</div></div>';
       return '<div class="screen tvx tv-body dining">' + rail + main + '</div>';
     },
 
@@ -281,6 +280,12 @@
   };
 
   // ---------- dining menus (live from ops.theetienne.com) ----------
+  // The serif used on the phone menus at order.theetienne.com. If it can't load, Georgia is used.
+  (function () {
+    var l = document.createElement('link'); l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css?family=Cormorant+Garamond:300,400,500,300i,400i&display=swap';
+    document.getElementsByTagName('head')[0].appendChild(l);
+  })();
   function findMenu(key) { for (var i = 0; i < C.dining.length; i++) if (C.dining[i].key === key) return C.dining[i]; return null; }
   // The rows on one menu, the same rule as the phone: the menu's own items, and for The Cellar also the
   // mini bar's soft drinks ticked "show in Cellar".
@@ -302,10 +307,10 @@
     for (i = 0; i < secs.length; i++) if (bucket[secs[i][0]].length) out.push([secs[i][1], bucket[secs[i][0]]]);
     return out;
   }
-  // 1273 -> "1,273.00", the same as the phone menus.
+  // 1273 -> "฿1,273". Satang are shown only when a price has them.
   function baht(n) {
     var v = Math.round((parseFloat(n) || 0) * 100) / 100, whole = Math.floor(v), dec = Math.round((v - whole) * 100);
-    return String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (dec < 10 ? '0' : '') + dec;
+    return '฿' + String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (dec ? '.' + (dec < 10 ? '0' : '') + dec : '');
   }
   // Reads every active menu row in one request. Checked when Dining opens and every 2 minutes while it is open,
   // so a price change or a bottle running out in ops shows here too.
@@ -397,8 +402,8 @@
     if (!focused) { focus(first()); return; }
     if (dir === 'right' && focused.getAttribute('data-act') === 'cat') { var c0 = document.getElementById('ch-0'); if (c0) { focus(c0); return true; } }
     if (dir === 'right' && focused.getAttribute('data-act') === 'menu') { var m0 = document.getElementById('mi-0'); if (m0) { focus(m0); return true; } }
-    // Dining: Left from any item goes back to the menu it belongs to, not whichever menu sits level with it.
-    if (dir === 'left' && focused.getAttribute('data-act') === 'item') {
+    // Dining: Left from an item in the left column goes back to the menu it belongs to, not whichever menu sits level with it.
+    if (dir === 'left' && focused.getAttribute('data-act') === 'item' && focused.offsetLeft < 100) {
       for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) { focus(document.getElementById('menu-' + q)); return true; }
     }
     var from = focused.getBoundingClientRect(), a = centre(from);

@@ -102,17 +102,17 @@ var ETIENNE_CONFIG = {
   // "sections" must match menuSections() in etienne-deploy index.html. The Cellar also lists the mini bar's
   // soft drinks that are ticked "show in Cellar".
   dining: [
-    { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'View on your phone',
+    { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'View the menu',
       description: 'A considered selection of refreshments is available in your room and replenished daily for your comfort.',
-      note: 'Help yourself. Anything you enjoy is added to your villa account.',
+      note: 'Every refreshment is yours to enjoy at leisure, and settled discreetly at the close of your stay.',
       sections: [['softs', 'Drinks'], ['snacks', 'Snacks']] },
-    { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Scan to order',
+    { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Order from your phone',
       description: 'A curated selection of wines, spirits and beers, complemented by mixers and soft drinks.',
-      note: 'Choose your bottles on your phone and the Villa Team will prepare them with discretion.',
+      note: 'Make your selection from your phone, and the Villa Team will prepare and serve it wherever you are in the residence.',
       sections: [['wine', 'Wine'], ['spirits', 'Spirits'], ['aperitif', 'Aperitifs'], ['beer', 'Beer'], ['softs', 'Soft Drinks & Mixers']] },
-    { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Scan to request',
+    { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Request from your phone',
       description: 'Private experiences throughout your stay, from dining and wellness to days on the water.',
-      note: 'Send a request from your phone and Concierge will confirm availability.',
+      note: 'Share your wishes from your phone, and Concierge will personally arrange every detail.',
       sections: [['dining', 'Dining'], ['wellness', 'Wellness'], ['water', 'On the Water'], ['transfers', 'Transfers']] }
   ],
 
