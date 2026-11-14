@@ -241,32 +241,36 @@ video.stream { object-fit: cover; }
 .prepared { margin: 22px 0 0; font-style: italic; font-size: 34px; font-weight: 300; letter-spacing: -.01em; color: #d6c4a5; }
 
 /* Dining & Experiences: live menus from ops.theetienne.com, set like a printed villa menu */
-.dining .tv-main { padding: 64px 80px 40px 90px; }
-.dining .tv-top { padding-bottom: 34px; margin-bottom: 30px; border-bottom: 1px solid rgba(214,196,165,.3); }
-.dining .cat-title, .dining .side-title h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; letter-spacing: 0; }
-.dining .cat-title { font-size: 84px; line-height: 1; }
-.dining .side-title h1 { font-size: 58px; line-height: 1; }
-.dining .side .cat strong { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 36px; font-weight: 400; letter-spacing: 0; margin-bottom: 6px; }
-.menu-desc { margin: 14px 0 0; max-width: 860px; color: rgba(244,242,237,.75); font: italic 300 26px/1.4 'Cormorant Garamond', Georgia, serif; }
-.menu-list { position: relative; -webkit-flex: 1; flex: 1; height: 100%; margin-right: 70px; overflow: hidden; padding: 0 0 60px;
-  display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; -webkit-align-content: flex-start; align-content: flex-start; -webkit-justify-content: space-between; justify-content: space-between; }
-.menu-section { width: 100%; margin: 34px 0 6px; font-size: 15px; font-weight: 700; letter-spacing: .38em; text-transform: uppercase; color: #d6c4a5; }
-.menu-section:first-child { margin-top: 0; }
-.menu-item { position: relative; width: 47%; padding: 18px 18px 18px 20px; border-bottom: 1px solid rgba(255,255,255,.12); }
-.menu-line { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; -webkit-justify-content: space-between; justify-content: space-between; }
-.menu-line strong { -webkit-flex: 1; flex: 1; padding-right: 20px; font: 400 30px/1.15 'Cormorant Garamond', Georgia, serif; color: #f4f2ed; }
-.menu-item small { display: block; margin-top: 6px; font: italic 300 20px/1.3 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.62); }
-.menu-price { font-size: 19px; letter-spacing: .06em; color: #d6c4a5; white-space: nowrap; }
-.menu-item.out strong, .menu-item.out small { color: rgba(244,242,237,.35); }
-.menu-item.out .menu-price { font-size: 12px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: rgba(244,242,237,.45); }
-.menu-item.focused { background: rgba(214,196,165,.12); }
-.menu-item.focused:before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #d6c4a5; }
-.menu-item.focused strong { color: #e9d8b8; }
-.menu-empty { margin: 30px 0; color: rgba(244,242,237,.75); font: italic 300 30px/1.5 'Cormorant Garamond', Georgia, serif; }
-.menu-order { width: 300px; -webkit-flex-shrink: 0; flex-shrink: 0; text-align: center; -webkit-align-self: flex-start; align-self: flex-start; padding-top: 6px; }
-.menu-order img { display: block; width: 220px; height: 220px; margin: 0 auto 26px; padding: 12px; background: #f1e5d0; }
-.menu-qr-label { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: #d6c4a5; }
-.menu-note { margin: 0; color: rgba(244,242,237,.72); font: italic 300 22px/1.45 'Cormorant Garamond', Georgia, serif; }
-.dining .tv-content { position: relative; }
-.dining .tv-content:after { content: ""; position: absolute; left: 0; bottom: 0; width: 960px; height: 110px; background: -webkit-linear-gradient(top, rgba(5,5,5,0), #050505); background: linear-gradient(to bottom, rgba(5,5,5,0), #050505); pointer-events: none; }
-.tvx.dining[data-col="cats"] .tv-main { opacity: 1; }
+/* Dining & Experiences: a printed menu card. Only the three menu names can be selected. */
+.dining-card { padding: 56px 110px 0; background: radial-gradient(circle at 80% 18%, #1b1915 0, #080808 36%, #030303 78%); }
+.dn-head { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: flex-start; align-items: flex-start; padding-bottom: 34px; border-bottom: 1px solid rgba(214,196,165,.28); }
+.dn-left { -webkit-flex: 1; flex: 1; padding-right: 60px; }
+.dining-card .back { display: inline-block; margin: 0 0 30px -10px; }
+.dining-card .kicker { font-size: 15px; font-weight: 700; letter-spacing: .38em; margin-bottom: 18px; }
+.dn-tabs { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; margin-left: -18px; }
+.dn-tab { margin-right: 26px; padding: 4px 18px 10px; border-bottom: 2px solid transparent; font: 300 60px/1.1 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.38); white-space: nowrap; }
+.dn-tab.active { color: #f4f2ed; border-bottom-color: rgba(214,196,165,.55); }
+.dn-tab.focused { color: #fff; background: rgba(214,196,165,.07); border-bottom-color: #d6c4a5; }
+.dn-desc { margin: 22px 0 0; max-width: 900px; color: rgba(244,242,237,.72); font: italic 300 27px/1.4 'Cormorant Garamond', Georgia, serif; }
+.dn-order { display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start; -webkit-flex-shrink: 0; flex-shrink: 0; }
+.dn-order-copy { width: 330px; margin-right: 34px; padding-top: 8px; text-align: right; }
+.dn-order img { display: block; width: 190px; height: 190px; padding: 10px; background: #f1e5d0; }
+.dn-qr-label { margin: 0 0 14px; font-size: 13px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: #d6c4a5; }
+.dn-note { margin: 0; color: rgba(244,242,237,.68); font: italic 300 22px/1.45 'Cormorant Garamond', Georgia, serif; }
+.dn-body { position: relative; height: 640px; overflow: hidden; margin-top: 40px; }
+.dn-cols { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; padding-bottom: 30px; }
+.dn-col { width: 44%; }
+.dn-section { margin: 0 0 18px; padding-top: 30px; font-size: 14px; font-weight: 700; letter-spacing: .38em; text-transform: uppercase; color: #d6c4a5; }
+.dn-col .dn-section:first-child { padding-top: 0; }
+.dn-item { margin-bottom: 20px; }
+.dn-line { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; }
+.dn-line strong { -webkit-flex: 1; flex: 1; padding-right: 24px; font: 400 31px/1.2 'Cormorant Garamond', Georgia, serif; color: #f4f2ed; }
+.dn-price { font: 400 28px/1.2 'Cormorant Garamond', Georgia, serif; color: #d6c4a5; white-space: nowrap; }
+.dn-item small { display: block; margin-top: 2px; font: italic 300 21px/1.3 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.55); }
+.dn-item.out strong, .dn-item.out small { color: rgba(244,242,237,.32); }
+.dn-item.out .dn-price { font: 700 12px/1 Helvetica, Arial, sans-serif; letter-spacing: .22em; text-transform: uppercase; color: rgba(244,242,237,.4); }
+.dn-empty { margin: 10px 0; color: rgba(244,242,237,.75); font: italic 300 30px/1.5 'Cormorant Garamond', Georgia, serif; }
+.dn-more { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; margin: 0; padding-top: 104px; text-align: center; font-size: 13px; font-weight: 700; letter-spacing: .32em; text-transform: uppercase; color: rgba(214,196,165,.8); visibility: hidden;
+  background: -webkit-linear-gradient(top, rgba(3,3,3,0), #030303 62%); background: linear-gradient(to bottom, rgba(3,3,3,0), #030303 62%); }
+.dn-more.show { visibility: visible; }
+.dn-more span { margin-left: 8px; }

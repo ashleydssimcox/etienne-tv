@@ -231,40 +231,29 @@
     },
 
     guide: function () { return qrPage(C.qrPages.guide); },
-    // Dining & Experiences: the Menu Manager's menus, live. Left: the three menus. Right: the items and a QR code to order.
+    // Dining & Experiences: the Menu Manager's menus, live, set out like a printed menu card.
+    // Read only: the only things to select are the three menu names. Down and Up scroll a long menu.
     dining: function () {
-      var menus = C.dining, m = findMenu(state.menu) || menus[0];
+      var menus = C.dining, m = findMenu(state.menu) || menus[0], i;
       state.menu = m.key;
-      var rail = '<div class="side rail">' + brand() + '<div class="side-title"><p class="kicker">At your service</p><h1>Dining &amp; Experiences</h1></div>' +
-        '<p class="side-label">Menus</p>';
-      for (var i = 0; i < menus.length; i++) {
-        var mm = menus[i];
-        rail += '<div class="cat focusable' + (mm.key === m.key ? ' active' : '') + '" id="menu-' + i + '" data-act="menu" data-arg="' + mm.key + '">' +
-          '<span class="cat-copy"><strong>' + esc(mm.name) + '</strong><small>' + esc(mm.eyebrow) + '</small></span><span class="cat-arrow">›</span></div>';
-      }
-      rail += '<div class="side-foot"><div class="back home-btn focusable" id="back" data-act="home"><span>←</span>Back to home</div></div></div>';
-
-      var list = '<div class="menu-list" id="menu-list">';
-      if (!state.menuItems) list += '<p class="menu-empty">' + (state.menuError ? 'The menu can’t be loaded right now. Scan the code to view it on your phone.' : 'Loading the menu…') + '</p>';
+      var tabs = '';
+      for (i = 0; i < menus.length; i++)
+        tabs += '<div class="dn-tab focusable' + (menus[i].key === m.key ? ' active' : '') + '" id="menu-' + i + '" data-act="menu" data-arg="' + menus[i].key + '">' + esc(menus[i].name) + '</div>';
+      var head = '<div class="dn-head"><div class="dn-left">' +
+        '<div class="back focusable" id="back" data-act="home"><span>←</span>Home</div>' +
+        '<p class="kicker">Dining &amp; Experiences</p><div class="dn-tabs">' + tabs + '</div>' +
+        '<p class="dn-desc">' + esc(m.description) + '</p></div>' +
+        '<div class="dn-order"><div class="dn-order-copy"><p class="dn-qr-label">' + esc(m.qrLabel) + '</p><p class="dn-note">' + esc(m.note) + '</p></div>' +
+        '<img src="' + qr(m.url) + '" alt=""></div></div>';
+      var body;
+      if (!state.menuItems) body = '<p class="dn-empty">' + (state.menuError ? 'The menu can’t be loaded right now. Scan the code to view it on your phone.' : 'Loading the menu…') + '</p>';
       else {
-        var groups = menuSections(m), idx = 0;
-        if (!groups.length) list += '<p class="menu-empty">This menu is being prepared. Please ask your Villa Host.</p>';
-        for (var g = 0; g < groups.length; g++) {
-          list += '<p class="menu-section"><span>' + esc(groups[g][0]) + '</span></p>';
-          for (var j = 0; j < groups[g][1].length; j++) {
-            var it = groups[g][1][j], out = it.in_stock === false;
-            list += '<div class="menu-item focusable' + (out ? ' out' : '') + '" id="mi-' + (idx++) + '" data-act="item"' + (out ? ' data-arg="out"' : '') + '>' +
-              '<span class="menu-line"><strong>' + esc(it.name) + '</strong><span class="menu-price">' + (out ? 'Unavailable' : baht(it.price)) + '</span></span>' +
-              (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</div>';
-          }
-        }
+        var groups = menuSections(m);
+        if (!groups.length) body = '<p class="dn-empty">This menu is being prepared. Please ask your Villa Host.</p>';
+        else { var cols = menuColumns(groups); body = '<div class="dn-cols"><div class="dn-col">' + cols[0] + '</div><div class="dn-col">' + cols[1] + '</div></div>'; }
       }
-      list += '</div>';
-      var order = '<div class="menu-order"><img src="' + qr(m.url) + '" alt=""><p class="menu-qr-label">' + esc(m.qrLabel) + '</p><p class="menu-note">' + esc(m.note) + '</p></div>';
-      var main = '<div class="tv-main"><div class="tv-top"><div><p class="kicker">' + esc(m.eyebrow) + '</p><h2 class="cat-title">' + esc(m.name) +
-        '</h2><p class="menu-desc">' + esc(m.description) + '</p></div><div class="clock"><span class="js-clock">' + clock() + '</span><small>Koh Samui</small></div></div>' +
-        '<div class="tv-content">' + list + order + '</div></div>';
-      return '<div class="screen tvx tv-body dining">' + rail + main + '</div>';
+      return '<div class="screen dining-card">' + head + '<div class="dn-body" id="menu-list">' + body + '</div>' +
+        '<p class="dn-more" id="dn-more">Scroll down for more <span>▾</span></p></div>';
     },
 
     share: function () {
@@ -334,18 +323,45 @@
     if (state.screen !== 'dining' || state.staff) return;
     var keep = focused && focused.id, sc = document.getElementById('menu-list'), top = sc ? sc.scrollTop : 0;
     render('dining', keep);
-    sc = document.getElementById('menu-list'); if (sc && top && !(focused && /^mi-/.test(focused.id))) sc.scrollTop = top;
+    sc = document.getElementById('menu-list'); if (sc && top) sc.scrollTop = top;
+    moreCue();
   }
   setInterval(function () { if (state.screen === 'dining') loadMenus(); }, 2 * 60000);
-  // Keeps the focused menu item inside the scrolling list. offsetTop is used, not the screen position,
-  // because the whole stage is scaled.
-  function scrollIntoList(el) {
+  // Splits a menu into two balanced columns. Rows are weighed (a heading or a description counts extra) and the
+  // split falls where the left column reaches half. A long section can carry on at the top of the right column.
+  function menuRow(it) {
+    var out = it.in_stock === false;
+    return '<div class="dn-item' + (out ? ' out' : '') + '"><div class="dn-line"><strong>' + esc(it.name) + '</strong><span class="dn-price">' +
+      (out ? 'Unavailable' : baht(it.price)) + '</span></div>' + (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</div>';
+  }
+  function menuColumns(groups) {
+    var rows = [], total = 0, g, j, w;
+    for (g = 0; g < groups.length; g++) {
+      rows.push({ html: '<p class="dn-section">' + esc(groups[g][0]) + '</p>', w: 1.6, head: true, name: groups[g][0] });
+      for (j = 0; j < groups[g][1].length; j++) { w = groups[g][1][j].description ? 1.5 : 1; rows.push({ html: menuRow(groups[g][1][j]), w: w, sec: groups[g][0] }); }
+    }
+    for (j = 0; j < rows.length; j++) total += rows[j].w;
+    var acc = 0, cut = rows.length;
+    for (j = 0; j < rows.length; j++) { if (acc + rows[j].w / 2 > total / 2) { cut = j; break; } acc += rows[j].w; }
+    if (cut > 0 && rows[cut - 1].head) cut--;   // never leave a heading at the foot of the left column
+    var left = '', right = '';
+    if (cut < rows.length && !rows[cut].head) right = '<p class="dn-section">' + esc(rows[cut].sec) + ', continued</p>';
+    for (j = 0; j < rows.length; j++) { if (j < cut) left += rows[j].html; else right += rows[j].html; }
+    return [left, right];
+  }
+  // Down and Up move a long menu by most of a screen. Returns true when it scrolled.
+  function scrollMenu(dir) {
     var list = document.getElementById('menu-list');
-    if (!list || el.parentNode !== list) return;
-    var top = el.offsetTop, bottom = top + el.offsetHeight, pad = 70;
-    if (el.id === 'mi-0') { list.scrollTop = 0; return; }
-    if (top - pad < list.scrollTop) list.scrollTop = top - pad;
-    else if (bottom + 20 > list.scrollTop + list.clientHeight) list.scrollTop = bottom + 20 - list.clientHeight;
+    if (!list) return false;
+    var max = list.scrollHeight - list.clientHeight, step = Math.round(list.clientHeight * 0.7);
+    if (dir === 'down' && list.scrollTop < max - 2) { list.scrollTop = Math.min(max, list.scrollTop + step); moreCue(); return true; }
+    if (dir === 'up' && list.scrollTop > 0) { list.scrollTop = Math.max(0, list.scrollTop - step); moreCue(); return true; }
+    return false;
+  }
+  function moreCue() {
+    var list = document.getElementById('menu-list'), cue = document.getElementById('dn-more');
+    if (!list || !cue) return;
+    cue.className = 'dn-more' + (list.scrollTop < list.scrollHeight - list.clientHeight - 2 ? ' show' : '');
   }
 
   function qrPage(p) {
@@ -394,16 +410,16 @@
     // Dining: moving onto a menu shows it; moving through the items keeps the focused one in view.
     if (state.screen === 'dining' && !state.staff) {
       if (el.getAttribute('data-act') === 'menu' && el.getAttribute('data-arg') !== state.menu) { state.menu = el.getAttribute('data-arg'); render('dining', el.id); return; }
-      scrollIntoList(el);
+      moreCue();
     }
   }
   function centre(r) { return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
   function move(dir) {
     if (!focused) { focus(first()); return; }
     if (dir === 'right' && focused.getAttribute('data-act') === 'cat') { var c0 = document.getElementById('ch-0'); if (c0) { focus(c0); return true; } }
-    if (dir === 'right' && focused.getAttribute('data-act') === 'menu') { var m0 = document.getElementById('mi-0'); if (m0) { focus(m0); return true; } }
-    // Dining: Left from an item in the left column goes back to the menu it belongs to, not whichever menu sits level with it.
-    if (dir === 'left' && focused.getAttribute('data-act') === 'item' && focused.offsetLeft < 100) {
+    // Dining: Down and Up scroll the menu while the focus stays on its name. Up at the top goes to Home.
+    if (state.screen === 'dining' && !state.staff && focused.getAttribute('data-act') === 'menu' && (dir === 'down' || dir === 'up') && scrollMenu(dir)) return true;
+    if (state.screen === 'dining' && !state.staff && dir === 'down' && focused.id === 'back') {
       for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) { focus(document.getElementById('menu-' + q)); return true; }
     }
     var from = focused.getBoundingClientRect(), a = centre(from);
@@ -446,11 +462,7 @@
       if (!pl.spotify) { toast(pl.name + ' is coming soon.'); return; }
       Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok, why) { if (!ok) toast('Spotify couldn’t open (' + (why || 'unknown') + ')'); });
     }
-    else if (act === 'menu') { var mi0 = document.getElementById('mi-0'); if (mi0) focus(mi0); }
-    else if (act === 'item') {
-      var mm = findMenu(state.menu);
-      toast(arg === 'out' ? 'This isn’t available at the moment.' : (state.menu === 'minibar' ? 'Help yourself from the mini bar in your room.' : mm.qrLabel + ': scan the code on the right with your phone.'));
-    }
+    else if (act === 'menu') scrollMenu('down');
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);
   }
