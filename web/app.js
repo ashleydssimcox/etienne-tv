@@ -3,7 +3,7 @@
   var C = ETIENNE_CONFIG;
   var app = document.getElementById('app');
   var stage = document.getElementById('stage');
-  var state = { surname: null, screen: 'home', category: null, channel: 0, weather: null, upCount: 0, staff: null };
+  var state = { surname: null, screen: 'home', category: null, channel: 0, weather: null, upCount: 0, staff: null, menu: null, menuItems: null, menuError: false };
   var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -231,7 +231,42 @@
     },
 
     guide: function () { return qrPage(C.qrPages.guide); },
-    dining: function () { return qrPage(C.qrPages.dining); },
+    // Dining & Experiences: the Menu Manager's menus, live. Left: the three menus. Right: the items and a QR code to order.
+    dining: function () {
+      var menus = C.dining, m = findMenu(state.menu) || menus[0];
+      state.menu = m.key;
+      var rail = '<div class="side rail">' + brand() + '<div class="side-title"><p class="kicker">At your service</p><h1>Dining &amp; Experiences</h1></div>' +
+        '<p class="side-label">Menus</p>';
+      for (var i = 0; i < menus.length; i++) {
+        var mm = menus[i], n = state.menuItems ? menuItems(mm).length : null;
+        rail += '<div class="cat focusable' + (mm.key === m.key ? ' active' : '') + '" id="menu-' + i + '" data-act="menu" data-arg="' + mm.key + '">' +
+          '<span class="cat-copy"><strong>' + esc(mm.name) + '</strong><small>' + (n === null ? esc(mm.eyebrow) : n + ' item' + (n === 1 ? '' : 's')) + '</small></span><span class="cat-arrow">›</span></div>';
+      }
+      rail += '<div class="side-foot"><div class="back home-btn focusable" id="back" data-act="home"><span>←</span>Back to home</div></div></div>';
+
+      var list = '<div class="menu-list" id="menu-list">';
+      if (!state.menuItems) list += '<p class="menu-empty">' + (state.menuError ? 'The menu can’t be loaded right now. Scan the code to view it on your phone.' : 'Loading the menu…') + '</p>';
+      else {
+        var groups = menuSections(m), idx = 0;
+        if (!groups.length) list += '<p class="menu-empty">This menu is being prepared. Please ask your Villa Host.</p>';
+        for (var g = 0; g < groups.length; g++) {
+          list += '<p class="menu-section">' + esc(groups[g][0]) + '</p>';
+          for (var j = 0; j < groups[g][1].length; j++) {
+            var it = groups[g][1][j], out = it.in_stock === false;
+            list += '<div class="menu-item focusable' + (out ? ' out' : '') + '" id="mi-' + (idx++) + '" data-act="item"' + (out ? ' data-arg="out"' : '') + '>' +
+              '<span class="menu-copy"><strong>' + esc(it.name) + '</strong>' + (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</span>' +
+              (out ? '<span class="menu-out">Unavailable</span>' : '') + '<span class="menu-price">฿' + baht(it.price) + '</span></div>';
+          }
+        }
+      }
+      list += '</div>';
+      var order = '<div class="menu-order"><p class="kicker">' + esc(m.qrLabel) + '</p><img src="' + qr(m.url) + '" alt=""><p class="menu-note">' + esc(m.note) + '</p></div>';
+      var main = '<div class="tv-main"><div class="tv-top"><div><p class="kicker">' + esc(m.eyebrow) + '</p><h2 class="cat-title">' + esc(m.name) +
+        '</h2><p class="menu-desc">' + esc(m.description) + '</p></div><div class="clock"><span class="js-clock">' + clock() + '</span><small>Koh Samui</small></div></div>' +
+        '<div class="tv-content">' + list + order + '</div>' +
+        '<p class="tv-hint"><span class="kbd">◀ ▶</span>Switch between menus and items<span class="kbd">▲ ▼</span>Browse<span class="kbd">BACK</span>Home</p></div>';
+      return '<div class="screen tvx tv-body dining">' + rail + main + '</div>';
+    },
 
     share: function () {
       return '<div class="screen page">' + header() + title('From your device', 'Share your screen') +
@@ -244,6 +279,69 @@
         '<p class="hint">When you stop sharing, the TV comes back to this screen.</p></div>';
     }
   };
+
+  // ---------- dining menus (live from ops.theetienne.com) ----------
+  function findMenu(key) { for (var i = 0; i < C.dining.length; i++) if (C.dining[i].key === key) return C.dining[i]; return null; }
+  // The rows on one menu, the same rule as the phone: the menu's own items, and for The Cellar also the
+  // mini bar's soft drinks ticked "show in Cellar".
+  function menuItems(m) {
+    var out = [], all = state.menuItems || [];
+    for (var i = 0; i < all.length; i++) {
+      var it = all[i];
+      if (it.category === m.key || (m.key === 'wine' && it.category === 'minibar' && it.show_in_cellar === true)) out.push(it);
+    }
+    return out;
+  }
+  // Items grouped under the menu's sections, in order. An item with no section, or one that isn't on this
+  // menu, goes under the first section, as on the phone. Empty sections are left out.
+  function menuSections(m) {
+    var items = menuItems(m), secs = m.sections, bucket = {}, i;
+    for (i = 0; i < secs.length; i++) bucket[secs[i][0]] = [];
+    for (i = 0; i < items.length; i++) (bucket[items[i].subcategory] || bucket[secs[0][0]]).push(items[i]);
+    var out = [];
+    for (i = 0; i < secs.length; i++) if (bucket[secs[i][0]].length) out.push([secs[i][1], bucket[secs[i][0]]]);
+    return out;
+  }
+  // 1273 -> "1,273.00", the same as the phone menus.
+  function baht(n) {
+    var v = Math.round((parseFloat(n) || 0) * 100) / 100, whole = Math.floor(v), dec = Math.round((v - whole) * 100);
+    return String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + (dec < 10 ? '0' : '') + dec;
+  }
+  // Reads every active menu row in one request. Checked when Dining opens and every 2 minutes while it is open,
+  // so a price change or a bottle running out in ops shows here too.
+  function loadMenus() {
+    var x = new XMLHttpRequest();
+    x.open('GET', C.supabaseUrl + '/rest/v1/menu_items?select=id,name,description,price,category,subcategory,in_stock,show_in_cellar,sort_order' +
+      '&active=eq.true&order=sort_order.asc,name.asc');
+    x.setRequestHeader('apikey', C.supabaseKey);
+    x.setRequestHeader('Authorization', 'Bearer ' + C.supabaseKey);
+    x.onload = function () {
+      var rows = null;
+      if (x.status === 200) { try { rows = JSON.parse(x.responseText); } catch (e) {} }
+      if (rows && rows.length !== undefined) { state.menuItems = rows; state.menuError = false; }
+      else if (!state.menuItems) state.menuError = true;
+      redrawDining();
+    };
+    x.onerror = function () { if (!state.menuItems) { state.menuError = true; redrawDining(); } };
+    x.send();
+  }
+  function redrawDining() {
+    if (state.screen !== 'dining' || state.staff) return;
+    var keep = focused && focused.id, sc = document.getElementById('menu-list'), top = sc ? sc.scrollTop : 0;
+    render('dining', keep);
+    sc = document.getElementById('menu-list'); if (sc && top && !(focused && /^mi-/.test(focused.id))) sc.scrollTop = top;
+  }
+  setInterval(function () { if (state.screen === 'dining') loadMenus(); }, 2 * 60000);
+  // Keeps the focused menu item inside the scrolling list. offsetTop is used, not the screen position,
+  // because the whole stage is scaled.
+  function scrollIntoList(el) {
+    var list = document.getElementById('menu-list');
+    if (!list || el.parentNode !== list) return;
+    var top = el.offsetTop, bottom = top + el.offsetHeight, pad = 70;
+    if (el.id === 'mi-0') { list.scrollTop = 0; return; }
+    if (top - pad < list.scrollTop) list.scrollTop = top - pad;
+    else if (bottom + 20 > list.scrollTop + list.clientHeight) list.scrollTop = bottom + 20 - list.clientHeight;
+  }
 
   function qrPage(p) {
     var cards = '';
@@ -280,7 +378,7 @@
     var body = document.querySelector('.tv-body');
     if (body) {
       var act0 = el.getAttribute('data-act');
-      body.setAttribute('data-col', act0 === 'cat' || act0 === 'home' ? 'cats' : 'channels');
+      body.setAttribute('data-col', act0 === 'cat' || act0 === 'menu' || act0 === 'home' ? 'cats' : 'channels');
     }
     // Live TV: moving onto a channel updates "Now selected"; onto a category switches the list.
     if (state.screen === 'tv' && !state.staff) {
@@ -288,11 +386,21 @@
       if (act === 'channel' && +el.getAttribute('data-arg') !== state.channel) { state.channel = +el.getAttribute('data-arg'); render('tv', el.id); }
       else if (act === 'cat' && el.getAttribute('data-arg') !== state.category) { state.category = el.getAttribute('data-arg'); state.channel = 0; render('tv', el.id); }
     }
+    // Dining: moving onto a menu shows it; moving through the items keeps the focused one in view.
+    if (state.screen === 'dining' && !state.staff) {
+      if (el.getAttribute('data-act') === 'menu' && el.getAttribute('data-arg') !== state.menu) { state.menu = el.getAttribute('data-arg'); render('dining', el.id); return; }
+      scrollIntoList(el);
+    }
   }
   function centre(r) { return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
   function move(dir) {
     if (!focused) { focus(first()); return; }
     if (dir === 'right' && focused.getAttribute('data-act') === 'cat') { var c0 = document.getElementById('ch-0'); if (c0) { focus(c0); return true; } }
+    if (dir === 'right' && focused.getAttribute('data-act') === 'menu') { var m0 = document.getElementById('mi-0'); if (m0) { focus(m0); return true; } }
+    // Dining: Left from any item goes back to the menu it belongs to, not whichever menu sits level with it.
+    if (dir === 'left' && focused.getAttribute('data-act') === 'item') {
+      for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) { focus(document.getElementById('menu-' + q)); return true; }
+    }
     var from = focused.getBoundingClientRect(), a = centre(from);
     var els = scope().querySelectorAll('.focusable'), best = null, bestScore = Infinity;
     for (var i = 0; i < els.length; i++) {
@@ -318,7 +426,7 @@
   function activate(el) {
     if (!el) return;
     var act = el.getAttribute('data-act'), arg = el.getAttribute('data-arg');
-    if (act === 'go') { state.channel = 0; render(arg); }
+    if (act === 'go') { state.channel = 0; if (arg === 'dining') { state.menu = null; render('dining', 'menu-0'); loadMenus(); } else render(arg); }
     else if (act === 'home') render('home', 'tile-' + indexOfTile(state.screen));
     else if (act === 'cat') render('tv', 'ch-0');
     else if (act === 'channel' || act === 'watch') {
@@ -332,6 +440,11 @@
       var pl = C.music[+arg];
       if (!pl.spotify) { toast(pl.name + ' is coming soon.'); return; }
       Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok, why) { if (!ok) toast('Spotify couldn’t open (' + (why || 'unknown') + ')'); });
+    }
+    else if (act === 'menu') { var mi0 = document.getElementById('mi-0'); if (mi0) focus(mi0); }
+    else if (act === 'item') {
+      var mm = findMenu(state.menu);
+      toast(arg === 'out' ? 'This isn’t available at the moment.' : (state.menu === 'minibar' ? 'Help yourself from the mini bar in your room.' : mm.qrLabel + ': scan the code on the right with your phone.'));
     }
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);

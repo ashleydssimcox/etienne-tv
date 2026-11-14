@@ -97,12 +97,27 @@ var ETIENNE_CONFIG = {
     { name: 'After Dark', eyebrow: 'Lounge & jazz', description: 'A restrained late-evening soundtrack.', spotify: 'https://open.spotify.com/playlist/3krLgXHpkncQmg1myfHFnn' }
   ],
 
+  // Dining & Experiences. The items, prices and stock come live from the Menu Manager in ops.theetienne.com
+  // (menu_items, active rows only). Out-of-stock items stay listed, dimmed and marked Unavailable, as on the phone.
+  // "sections" must match menuSections() in etienne-deploy index.html. The Cellar also lists the mini bar's
+  // soft drinks that are ticked "show in Cellar".
+  dining: [
+    { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'View on your phone',
+      description: 'A considered selection of refreshments is available in your room and replenished daily for your comfort.',
+      note: 'Help yourself. Anything you enjoy is added to your villa account.',
+      sections: [['softs', 'Drinks'], ['snacks', 'Snacks']] },
+    { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Scan to order',
+      description: 'A curated selection of wines, spirits and beers, complemented by mixers and soft drinks.',
+      note: 'Choose your bottles on your phone and the Villa Team will prepare them with discretion.',
+      sections: [['wine', 'Wine'], ['spirits', 'Spirits'], ['aperitif', 'Aperitifs'], ['beer', 'Beer'], ['softs', 'Soft Drinks & Mixers']] },
+    { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Scan to request',
+      description: 'Private experiences throughout your stay, from dining and wellness to days on the water.',
+      note: 'Send a request from your phone and Concierge will confirm availability.',
+      sections: [['dining', 'Dining'], ['wellness', 'Wellness'], ['water', 'On the Water'], ['transfers', 'Transfers']] }
+  ],
+
   qrPages: {
     guide: { kicker: 'At home', title: 'Villa Guide', note: 'For anything not covered here, your Villa Host is always available.', items: [
-      { name: 'Guest Guide', eyebrow: 'Your stay', description: 'Scan to open villa information and everything you need during your stay.', url: 'https://order.theetienne.com/guide' } ] },
-    dining: { kicker: 'At your service', title: 'Dining & Experiences', note: 'Scan a code to browse and make a request from your phone.', items: [
-      { name: 'Mini Bar Menu', eyebrow: 'Refreshments', description: 'Drinks and snacks in your in-room mini bar.', url: 'https://order.theetienne.com/minibar' },
-      { name: 'Wine Cellar Menu', eyebrow: 'Wine selection', description: 'The Étienne’s in-house cellar.', url: 'https://order.theetienne.com/thecellar' },
-      { name: 'Experiences Menu', eyebrow: 'Discover Koh Samui', description: 'Island adventures and in-villa indulgences.', url: 'https://order.theetienne.com/experiences' } ] }
+      { name: 'Guest Guide', eyebrow: 'Your stay', description: 'Scan to open villa information and everything you need during your stay.', url: 'https://order.theetienne.com/guide' } ] }
   }
 };

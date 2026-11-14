@@ -239,3 +239,23 @@ video.stream { object-fit: cover; }
 .welcome h1.name-l { font-size: 92px; }
 .welcome h1.name-xl { font-size: 76px; }
 .prepared { margin: 22px 0 0; font-style: italic; font-size: 34px; font-weight: 300; letter-spacing: -.01em; color: #d6c4a5; }
+
+/* Dining & Experiences: live menus from ops.theetienne.com */
+.menu-desc { margin: 14px 0 0; max-width: 900px; color: rgba(244,242,237,.78); font: italic 20px/1.45 Georgia, serif; }
+.menu-list { position: relative; -webkit-flex: 1; flex: 1; height: 100%; margin-right: 44px; overflow: hidden; padding: 4px 6px 30px 4px; }
+.menu-section { margin: 26px 0 12px; font-size: 17px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase; color: #d6c4a5; }
+.menu-section:first-child { margin-top: 4px; }
+.menu-item { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; min-height: 92px; margin-bottom: 10px; padding: 16px 24px; background: #15130f; border: 1px solid rgba(255,255,255,.22); }
+.menu-copy { -webkit-flex: 1; flex: 1; min-width: 0; padding-right: 24px; }
+.menu-copy strong { display: block; font-size: 26px; font-weight: 400; }
+.menu-copy small { display: block; margin-top: 6px; font-size: 16px; line-height: 1.4; color: rgba(244,242,237,.78); }
+.menu-price { font-size: 24px; color: #d6c4a5; white-space: nowrap; }
+.menu-out { margin-right: 22px; padding: 6px 14px; border: 1px solid rgba(255,255,255,.35); border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: rgba(244,242,237,.85); white-space: nowrap; }
+.menu-item.out .menu-copy, .menu-item.out .menu-price { opacity: .45; }
+.menu-item.focused { background: #2b2418; border-color: #d6c4a5; outline: 3px solid #d6c4a5; }
+.menu-item.focused strong { color: #fff; }
+.menu-empty { margin: 40px 0; color: rgba(244,242,237,.78); font: italic 24px/1.5 Georgia, serif; }
+.menu-order { width: 380px; -webkit-flex-shrink: 0; flex-shrink: 0; padding: 30px; border: 1px solid rgba(214,196,165,.35); background: #12110f; text-align: center; -webkit-align-self: flex-start; align-self: flex-start; }
+.menu-order img { display: block; width: 280px; height: 280px; margin: 6px auto 24px; padding: 10px; background: #f1e5d0; }
+.menu-note { margin: 0; color: rgba(244,242,237,.82); font: italic 19px/1.5 Georgia, serif; }
+.dining .side-title h1 { font-size: 56px; }
