@@ -287,3 +287,29 @@ video.stream { object-fit: cover; }
 .ex-card.out strong, .ex-card.out small, .ex-card.out .ex-img { opacity: .4; }
 .ex-card.out .ex-price { font: 700 13px/1 Helvetica, Arial, sans-serif; letter-spacing: .22em; text-transform: uppercase; color: rgba(244,242,237,.42); }
 .ex-hint { height: 40px; }
+/* Villa Guide: the Guest Guide as text, with its sections in a scrolling sidebar list. */
+.guide .side-title h1 { margin-bottom: 30px; }
+.gs-rail { position: relative; -webkit-flex: 1; flex: 1; min-height: 0; overflow: hidden; margin: 0 -10px 20px; padding: 0 10px; }
+.gs-item { position: relative; padding: 13px 20px 13px 24px; margin-bottom: 2px; border-radius: 4px; font: 400 29px/1.15 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.62); }
+.gs-item.active { background: rgba(214,196,165,.14); color: #fff; }
+.gs-item.active:before { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; background: #d6c4a5; }
+.gs-item.focused { background: #d6c4a5; color: #050505; }
+.gd-top { padding-bottom: 26px; }
+.gd-col { max-width: 1180px; padding-bottom: 60px; }
+.gd-p { margin: 0 0 22px; font: 400 29px/1.5 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.86); }
+.gd-sub { padding-top: 18px; margin-bottom: 14px; }
+.gd-ul { margin: 0 0 24px; padding: 0; list-style: none; }
+.gd-ul li { position: relative; padding: 0 0 8px 30px; font: 400 28px/1.4 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.86); }
+.gd-ul li:before { content: ""; position: absolute; left: 4px; top: 18px; width: 10px; height: 1px; background: #d6c4a5; }
+.gd-pairs { margin: 4px 0 26px; }
+.gd-pair { display: -webkit-flex; display: flex; -webkit-align-items: baseline; align-items: baseline; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.gd-pair strong { width: 34%; -webkit-flex-shrink: 0; flex-shrink: 0; padding-right: 30px; font-size: 15px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: #d6c4a5; }
+.gd-pair span { -webkit-flex: 1; flex: 1; font: 400 29px/1.35 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.88); }
+.gd-sign { margin: 30px 0 0; font: italic 400 29px/1.5 'Cormorant Garamond', Georgia, serif; color: rgba(244,242,237,.8); }
+.gd-sign span { display: block; font-style: normal; font-size: 36px; color: #d6c4a5; }
+
+/* Streaming tiles: quiet single-colour logos in champagne, brighter when selected. */
+.card .app-logo { display: block; width: 76px; height: 76px; opacity: .72; -webkit-transition: opacity .2s; transition: opacity .2s; }
+.card.focused .app-logo { opacity: 1; }
+.card .app-logo-text { display: block; height: 76px; font: italic 400 46px/76px 'Cormorant Garamond', Georgia, serif; color: #e9dcc4; opacity: .8; }
+.card.focused .app-logo-text { opacity: 1; }

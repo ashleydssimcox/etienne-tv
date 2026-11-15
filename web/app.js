@@ -190,7 +190,7 @@
       var cards = '';
       for (var i = 0; i < C.apps.length; i++) {
         var a = C.apps[i];
-        cards += '<div class="card focusable" id="app-' + i + '" data-act="app" data-arg="' + i + '"><span class="logo">' + esc(a.name) + '</span><i>↗</i>' +
+        cards += '<div class="card focusable" id="app-' + i + '" data-act="app" data-arg="' + i + '">' + (a.logo ? '<img class="app-logo" src="' + C.assetBase + a.logo + '" alt="">' : '<span class="app-logo-text">' + esc(a.name) + '</span>') + '<i>↗</i>' +
           '<span><small>' + esc(a.eyebrow) + '</small><strong>' + esc(a.name) + '</strong></span></div>';
       }
       return '<div class="screen page">' + header() + title('Watch your way', 'Streaming') +
@@ -230,7 +230,26 @@
         '<span><strong>' + esc(ch.name) + '</strong><small>' + esc(ch.detail || '') + ' · Up / Down to change channel · Back for the guide</small></span></div></div>';
     },
 
-    guide: function () { return qrPage(C.qrPages.guide); },
+    // Villa Guide: the Guest Guide as text. Left: its sections. Right: the section, scrolled with Right then Up / Down.
+    guide: function () {
+      var secs = C.guide, n = state.gsec || 0, sec = secs[n], i, b, h = '';
+      var rail = '<div class="side rail">' + brand() + '<div class="side-title"><p class="kicker">At home</p><h1>Villa Guide</h1></div>' +
+        '<div class="gs-rail" id="gs-rail">';
+      for (i = 0; i < secs.length; i++)
+        rail += '<div class="gs-item focusable' + (i === n ? ' active' : '') + '" id="gs-' + i + '" data-act="menu" data-arg="' + i + '">' + esc(secs[i].name) + '</div>';
+      rail += '</div><div class="side-foot"><div class="back home-btn focusable" id="back" data-act="home"><span>←</span>Back to home</div></div></div>';
+      for (i = 0; i < sec.blocks.length; i++) {
+        b = sec.blocks[i];
+        if (b[0] === 'p') h += '<p class="gd-p">' + guideText(b[1]) + '</p>';
+        else if (b[0] === 'sub') h += '<p class="dn-section gd-sub">' + guideText(b[1]) + '</p>';
+        else if (b[0] === 'sign') h += '<p class="gd-sign">' + guideText(b[1]) + '<span>The Étienne</span></p>';
+        else if (b[0] === 'ul') { h += '<ul class="gd-ul">'; for (var j = 0; j < b[1].length; j++) h += '<li>' + guideText(b[1][j]) + '</li>'; h += '</ul>'; }
+        else if (b[0] === 'pairs') { h += '<div class="gd-pairs">'; for (var k = 0; k < b[1].length; k++) h += '<div class="gd-pair"><strong>' + guideText(b[1][k][0]) + '</strong><span>' + guideText(b[1][k][1]) + '</span></div>'; h += '</div>'; }
+      }
+      var main = '<div class="tv-main"><div class="dn-top gd-top"><div class="dn-heading"><p class="kicker">Villa Guide</p><h2 class="dn-title">' + esc(sec.title) + '</h2></div></div>' +
+        '<div class="dn-wrap"><div class="dn-body" id="menu-list" data-act="list"><div class="gd-col">' + h + '</div></div><p class="dn-more" id="dn-more"></p></div></div>';
+      return '<div class="screen tvx tv-body dining guide">' + rail + main + '</div>';
+    },
     // Dining & Experiences: the Menu Manager's menus, live. Left: the three menus. Right: the menu as a printed card.
     // The items are text only. When a menu is longer than the screen, Right moves into it and Up / Down scroll it.
     dining: function () {
@@ -393,7 +412,24 @@
     list.className = 'dn-body' + (long ? ' focusable' : '') + (focused === list ? ' focused' : '');
     var inList = focused === list;
     cue.className = 'dn-more' + (long ? ' show' : '') + (below ? ' fade' : '');
-    cue.innerHTML = !long ? '' : inList ? '<span class="kbd">▲ ▼</span>Scroll<span class="kbd">◀</span>Menus' : '<span class="kbd">▶</span>See the full menu';
+    cue.innerHTML = !long ? '' : inList ? '<span class="kbd">▲ ▼</span>Scroll<span class="kbd">◀</span>Menus' : '<span class="kbd">▶</span>' + (state.screen === 'guide' ? 'Read more' : 'See the full menu');
+  }
+
+  // Guide text: escaped, with {phone} replaced by the villa's number.
+  function guideText(t) { return esc(t).replace(/\{phone\}/g, esc(C.villaPhone)); }
+  // The sidebar entry for the menu or guide section on screen.
+  function railActive() {
+    if (state.screen === 'guide') return document.getElementById('gs-' + (state.gsec || 0));
+    for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) return document.getElementById('menu-' + q);
+    return null;
+  }
+  // Keeps the focused guide section inside the scrolling sidebar list.
+  function scrollRail(el) {
+    var r = document.getElementById('gs-rail');
+    if (!r || el.parentNode !== r) return;
+    var top = el.offsetTop, bottom = top + el.offsetHeight;
+    if (top < r.scrollTop) r.scrollTop = top;
+    else if (bottom > r.scrollTop + r.clientHeight) r.scrollTop = bottom - r.clientHeight;
   }
 
   function qrPage(p) {
@@ -440,8 +476,16 @@
       else if (act === 'cat' && el.getAttribute('data-arg') !== state.category) { state.category = el.getAttribute('data-arg'); state.channel = 0; render('tv', el.id); }
     }
     // Dining: moving onto a menu shows it; moving through the items keeps the focused one in view.
-    if (state.screen === 'dining' && !state.staff) {
-      if (el.getAttribute('data-act') === 'menu' && el.getAttribute('data-arg') !== state.menu) { state.menu = el.getAttribute('data-arg'); render('dining', el.id); return; }
+    if (state.screen === 'guide' && !state.staff && el.getAttribute('data-act') === 'menu') {
+      if (+el.getAttribute('data-arg') !== (state.gsec || 0)) {
+        var keepTop = document.getElementById('gs-rail').scrollTop;
+        state.gsec = +el.getAttribute('data-arg'); render('guide', el.id);
+        document.getElementById('gs-rail').scrollTop = keepTop; scrollRail(focused); return;
+      }
+      scrollRail(el);
+    }
+    if ((state.screen === 'dining' || state.screen === 'guide') && !state.staff) {
+      if (state.screen === 'dining' && el.getAttribute('data-act') === 'menu' && el.getAttribute('data-arg') !== state.menu) { state.menu = el.getAttribute('data-arg'); render('dining', el.id); return; }
       if (el.getAttribute('data-act') === 'exp') scrollCards(el);
       moreCue();
     }
@@ -451,11 +495,11 @@
     if (!focused) { focus(first()); return; }
     if (dir === 'right' && focused.getAttribute('data-act') === 'cat') { var c0 = document.getElementById('ch-0'); if (c0) { focus(c0); return true; } }
     // Dining: Right from a menu goes into a long menu; inside it Up / Down scroll and Left goes back to the menu.
-    if (state.screen === 'dining' && !state.staff) {
+    if ((state.screen === 'dining' || state.screen === 'guide') && !state.staff) {
       var lst = document.getElementById('menu-list');
       if (focused === lst) {
         if (dir === 'up' || dir === 'down') { scrollMenu(dir); return true; }
-        if (dir === 'left') { for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) { focus(document.getElementById('menu-' + q)); return true; } }
+        if (dir === 'left') focus(railActive());
         return true;
       }
       if (dir === 'right' && focused.getAttribute('data-act') === 'menu') {
@@ -465,7 +509,7 @@
       }
       if (focused.getAttribute('data-act') === 'exp') {
         if (dir === 'up' || dir === 'down') return true;
-        if (dir === 'left' && focused.id === 'ex-0') { for (var q2 = 0; q2 < C.dining.length; q2++) if (C.dining[q2].key === state.menu) { focus(document.getElementById('menu-' + q2)); return true; } }
+        if (dir === 'left' && focused.id === 'ex-0') { focus(railActive()); return true; }
         if (dir === 'right' || dir === 'left') { var nx = document.getElementById('ex-' + (+focused.id.slice(3) + (dir === 'right' ? 1 : -1))); if (nx) focus(nx); return true; }
       }
     }
@@ -494,7 +538,7 @@
   function activate(el) {
     if (!el) return;
     var act = el.getAttribute('data-act'), arg = el.getAttribute('data-arg');
-    if (act === 'go') { state.channel = 0; if (arg === 'dining') { state.menu = null; render('dining', 'menu-0'); loadMenus(); } else render(arg); }
+    if (act === 'go') { state.channel = 0; if (arg === 'dining') { state.menu = null; render('dining', 'menu-0'); loadMenus(); } else if (arg === 'guide') { state.gsec = 0; render('guide', 'gs-0'); } else render(arg); }
     else if (act === 'home') render('home', 'tile-' + indexOfTile(state.screen));
     else if (act === 'cat') render('tv', 'ch-0');
     else if (act === 'channel' || act === 'watch') {
