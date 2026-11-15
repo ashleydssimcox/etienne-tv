@@ -367,15 +367,19 @@
   function expImage(u) { return !u ? '' : /^https?:/.test(u) ? u : 'https://ops.theetienne.com' + (u.charAt(0) === '/' ? '' : '/') + u; }
   // Photos in web/img are served from GitHub Pages alongside app.js.
   function photoUrl(p) { return !p ? '' : /^https?:/.test(p) ? p : C.assetBase + p; }
-  function stockPhoto(label) {
-    var secs = findMenu('experiences').sections;
-    for (var i = 0; i < secs.length; i++) if (secs[i][1] === label) return photoUrl((C.experiencePhotos || {})[secs[i][0]]);
+  // Picks a stock photo for one card that no earlier card has used (see experiencePhotos in config.js).
+  function stockPhoto(it, label, used) {
+    var list = C.experiencePhotos || [], secs = findMenu('experiences').sections, key = '', i;
+    for (i = 0; i < secs.length; i++) if (secs[i][1] === label) key = secs[i][0];
+    for (i = 0; i < list.length; i++) if (!used[i] && new RegExp(list[i].match, 'i').test(it.name)) { used[i] = 1; return photoUrl(list[i].file); }
+    for (i = 0; i < list.length; i++) if (!used[i] && list[i].section === key) { used[i] = 1; return photoUrl(list[i].file); }
+    for (i = 0; i < list.length; i++) if (!used[i]) { used[i] = 1; return photoUrl(list[i].file); }
     return '';
   }
   function expCards(groups) {
-    var html = '', n = 0, g, j;
+    var html = '', n = 0, used = {}, g, j;
     for (g = 0; g < groups.length; g++) for (j = 0; j < groups[g][1].length; j++) {
-      var it = groups[g][1][j], out = it.in_stock === false, img = expImage(it.image_url) || stockPhoto(groups[g][0]);
+      var it = groups[g][1][j], out = it.in_stock === false, img = expImage(it.image_url) || stockPhoto(it, groups[g][0], used);
       html += '<div class="ex-card focusable' + (out ? ' out' : '') + '" id="ex-' + (n++) + '" data-act="exp">' +
         '<div class="ex-img"' + (img ? ' style="background-image:url(\'' + img.replace(/'/g, '%27') + '\')"' : '') + '>' + (img ? '' : '<span>' + esc(groups[g][0]) + '</span>') + '</div>' +
         '<div class="ex-copy"><p class="ex-eyebrow">' + esc(groups[g][0]) + '</p><strong>' + esc(it.name) + '</strong>' +

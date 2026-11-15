@@ -108,15 +108,20 @@ var ETIENNE_CONFIG = {
   // Shown under every menu. The same wording as the phone menus at order.theetienne.com.
   menuTaxNote: 'All prices are in Thai Baht (฿) and are subject to 10% service charge and 7% VAT',
 
-  // Experience cards use the item's own photo from the Menu Manager (image_url). Until one is added, the card
-  // shows the stock photo for its section, kept in web/img and served from GitHub Pages with the rest of the page.
-  // Free Unsplash photos (unsplash.com/license), downloaded by .github/workflows/fetch-photos.yml.
-  experiencePhotos: {
-    dining: 'img/exp-dining.jpg',        // candlelit table, Benjamin Brunner
-    wellness: 'img/exp-wellness.jpg',    // massage, unsplash.com/photos/UNRW1dD2xjI
-    water: 'img/exp-water.jpg',          // speedboat off a Thai island, Jim Thirion
-    transfers: 'img/exp-transfers.jpg'   // Mercedes interior, unsplash.com/photos/ovrOPhu8vSw
-  },
+  // Experience cards use the item's own photo from the Menu Manager (image_url). Until one is added, each card
+  // takes a stock photo from this list: first one whose "match" words appear in the experience's name, then
+  // an unused one from its section, so no two cards share a photo. The files are in web/img, served from
+  // GitHub Pages with the rest of the page. Free Unsplash photos (unsplash.com/license), downloaded by
+  // .github/workflows/fetch-photos.yml.
+  experiencePhotos: [
+    { file: 'img/exp-chef.jpg',      section: 'dining',    match: 'chef|dinner' },          // candlelit table, Benjamin Brunner
+    { file: 'img/exp-cooking.jpg',   section: 'dining',    match: 'cooking|class|thai' },   // Thai curry, Phuket
+    { file: 'img/exp-picnic.jpg',    section: 'dining',    match: 'picnic|beach' },         // chairs on the sand, Gabrielle Maurer
+    { file: 'img/exp-massage.jpg',   section: 'wellness',  match: 'massage|spa|stone' },    // hot-stone massage
+    { file: 'img/exp-sunset.jpg',    section: 'water',     match: 'sunset|boat|charter' },  // sea at sunset, Koh Yao Yai
+    { file: 'img/exp-island.jpg',    section: 'water',     match: 'island|tour|sightseeing' }, // aerial beach, Jim Thirion
+    { file: 'img/exp-transfers.jpg', section: 'transfers', match: 'transfer|airport|car' }  // Mercedes interior
+  ],
 
   dining: [
     { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'Scan to view',

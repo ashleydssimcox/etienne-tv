@@ -17,10 +17,14 @@ jobs:
         run: |
           mkdir -p web/img
           q='?fm=jpg&q=72&w=900&fit=crop'
-          curl -fsSL -o web/img/exp-dining.jpg    "https://images.unsplash.com/photo-1695641738244-25e5355e9a42$q"
-          curl -fsSL -o web/img/exp-wellness.jpg  "https://images.unsplash.com/photo-1650044252595-cacd425982ff$q"
-          curl -fsSL -o web/img/exp-water.jpg     "https://images.unsplash.com/photo-1740688244365-e339951acc16$q"
-          curl -fsSL -o web/img/exp-transfers.jpg "https://images.unsplash.com/photo-1471174617910-3e9c04f58ff5$q"
+          get() { curl -fsSL -o "web/img/$1.jpg" "https://images.unsplash.com/photo-$2$q"; }
+          get exp-chef      1695641738244-25e5355e9a42
+          get exp-cooking   1521633138793-76551d05e2a3
+          get exp-picnic    1683914791864-b32fe9c45029
+          get exp-massage   1600334089648-b0d9d3028eb2
+          get exp-sunset    1608480176234-c3fdfe59e988
+          get exp-island    1740688244365-e339951acc16
+          get exp-transfers 1471174617910-3e9c04f58ff5
           ls -l web/img
       - name: Commit
         run: |
