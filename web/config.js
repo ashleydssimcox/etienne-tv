@@ -104,6 +104,15 @@ var ETIENNE_CONFIG = {
   // Shown under every menu. The same wording as the phone menus at order.theetienne.com.
   menuTaxNote: 'All prices are in Thai Baht (฿) and are subject to 10% service charge and 7% VAT',
 
+  // Experience cards use the item's own photo from the Menu Manager (image_url). Until one is added, the card
+  // shows the stock photo for its section. Free Unsplash photos (unsplash.com/license), loaded straight from Unsplash.
+  experiencePhotos: {
+    dining: 'https://images.unsplash.com/photo-1695641738244-25e5355e9a42?fm=jpg&q=70&w=800&fit=crop',      // candlelit table, Benjamin Brunner
+    wellness: 'https://images.unsplash.com/photo-1650044252595-cacd425982ff?fm=jpg&q=70&w=800&fit=crop',    // massage, unsplash.com/photos/UNRW1dD2xjI
+    water: 'https://images.unsplash.com/photo-1740688244365-e339951acc16?fm=jpg&q=70&w=800&fit=crop',       // speedboat off a Thai island, Jim Thirion
+    transfers: 'https://images.unsplash.com/photo-1471174617910-3e9c04f58ff5?fm=jpg&q=70&w=800&fit=crop'    // Mercedes interior, unsplash.com/photos/ovrOPhu8vSw
+  },
+
   dining: [
     { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'Scan to view',
       description: 'A considered selection of refreshments is available in your room and replenished daily for your comfort.',
