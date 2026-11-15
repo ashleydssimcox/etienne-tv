@@ -247,11 +247,13 @@
       else {
         var groups = menuSections(m);
         if (!groups.length) body = '<p class="dn-empty">This menu is being prepared. Please ask your Villa Host.</p>';
-        else { var cols = menuColumns(groups); body = '<div class="dn-cols"><div class="dn-col">' + cols[0] + '</div><div class="dn-col">' + cols[1] + '</div></div>'; }
+        else if (m.key === 'experiences') body = null;
+        else body = '<div class="dn-col">' + menuColumn(groups) + '</div>';
       }
       var main = '<div class="tv-main"><div class="dn-top"><div class="dn-heading"><p class="kicker">' + esc(m.eyebrow) + '</p><h2 class="dn-title">' + esc(m.name) +
         '</h2><p class="dn-desc">' + esc(m.description) + '</p></div><div class="dn-qr"><img src="' + qr(m.url) + '" alt=""><p>' + esc(m.qrLabel) + '</p></div></div>' +
-        '<div class="dn-wrap"><div class="dn-body" id="menu-list" data-act="list">' + body + '</div><p class="dn-more" id="dn-more"></p></div>' +
+        (body === null ? expCards(menuSections(m)) :
+        '<div class="dn-wrap"><div class="dn-body" id="menu-list" data-act="list">' + body + '</div><p class="dn-more" id="dn-more"></p></div>') +
         '<p class="dn-tax">' + esc(C.menuTaxNote) + '</p></div>';
       return '<div class="screen tvx tv-body dining">' + rail + main + '</div>';
     },
@@ -305,7 +307,7 @@
   // so a price change or a bottle running out in ops shows here too.
   function loadMenus() {
     var x = new XMLHttpRequest();
-    x.open('GET', C.supabaseUrl + '/rest/v1/menu_items?select=id,name,description,price,category,subcategory,in_stock,show_in_cellar,sort_order' +
+    x.open('GET', C.supabaseUrl + '/rest/v1/menu_items?select=id,name,description,price,category,subcategory,in_stock,show_in_cellar,sort_order,image_url' +
       '&active=eq.true&order=sort_order.asc,name.asc');
     x.setRequestHeader('apikey', C.supabaseKey);
     x.setRequestHeader('Authorization', 'Bearer ' + C.supabaseKey);
@@ -327,27 +329,45 @@
     moreCue();
   }
   setInterval(function () { if (state.screen === 'dining') loadMenus(); }, 2 * 60000);
-  // Splits a menu into two balanced columns. Rows are weighed (a heading or a description counts extra) and the
-  // split falls where the left column reaches half. A long section can carry on at the top of the right column.
+  // One menu row: name and price, with the description underneath.
   function menuRow(it) {
     var out = it.in_stock === false;
     return '<div class="dn-item' + (out ? ' out' : '') + '"><div class="dn-line"><strong>' + esc(it.name) + '</strong><span class="dn-price">' +
       (out ? 'Unavailable' : baht(it.price)) + '</span></div>' + (it.description ? '<small>' + esc(it.description) + '</small>' : '') + '</div>';
   }
-  function menuColumns(groups) {
-    var rows = [], total = 0, g, j, w;
+  function menuColumn(groups) {
+    var html = '', g, j;
     for (g = 0; g < groups.length; g++) {
-      rows.push({ html: '<p class="dn-section">' + esc(groups[g][0]) + '</p>', w: 1.6, head: true, name: groups[g][0] });
-      for (j = 0; j < groups[g][1].length; j++) { w = groups[g][1][j].description ? 1.5 : 1; rows.push({ html: menuRow(groups[g][1][j]), w: w, sec: groups[g][0] }); }
+      html += '<p class="dn-section">' + esc(groups[g][0]) + '</p>';
+      for (j = 0; j < groups[g][1].length; j++) html += menuRow(groups[g][1][j]);
     }
-    for (j = 0; j < rows.length; j++) total += rows[j].w;
-    var acc = 0, cut = rows.length;
-    for (j = 0; j < rows.length; j++) { if (acc + rows[j].w / 2 > total / 2) { cut = j; break; } acc += rows[j].w; }
-    if (cut > 0 && rows[cut - 1].head) cut--;   // never leave a heading at the foot of the left column
-    var left = '', right = '';
-    if (cut < rows.length && !rows[cut].head) right = '<p class="dn-section">' + esc(rows[cut].sec) + ', continued</p>';
-    for (j = 0; j < rows.length; j++) { if (j < cut) left += rows[j].html; else right += rows[j].html; }
-    return [left, right];
+    return html;
+  }
+  // Experiences as picture cards in a row, browsed with Left / Right. The photo is the item's image_url in the
+  // Menu Manager; a path such as /img/x.jpg is served from ops.theetienne.com. With no photo the card shows its section.
+  function expImage(u) { return !u ? '' : /^https?:/.test(u) ? u : 'https://ops.theetienne.com' + (u.charAt(0) === '/' ? '' : '/') + u; }
+  function expCards(groups) {
+    var html = '', n = 0, g, j;
+    for (g = 0; g < groups.length; g++) for (j = 0; j < groups[g][1].length; j++) {
+      var it = groups[g][1][j], out = it.in_stock === false, img = expImage(it.image_url);
+      html += '<div class="ex-card focusable' + (out ? ' out' : '') + '" id="ex-' + (n++) + '" data-act="exp">' +
+        '<div class="ex-img"' + (img ? ' style="background-image:url(\'' + img.replace(/'/g, '%27') + '\')"' : '') + '>' + (img ? '' : '<span>' + esc(groups[g][0]) + '</span>') + '</div>' +
+        '<div class="ex-copy"><p class="ex-eyebrow">' + esc(groups[g][0]) + '</p><strong>' + esc(it.name) + '</strong>' +
+        (it.description ? '<small>' + esc(it.description) + '</small>' : '') +
+        '<span class="ex-price">' + (out ? 'Unavailable' : baht(it.price)) + '</span></div></div>';
+    }
+    return '<div class="ex-wrap"><div class="ex-track" id="ex-track">' + html + '</div>' +
+      (n > 3 ? '<p class="dn-more show ex-hint"><span class="kbd">◀ ▶</span>Browse</p>' : '') + '</div>';
+  }
+  // Keeps the focused card in view. offsetLeft is used because the whole stage is scaled.
+  function scrollCards(el) {
+    var t = document.getElementById('ex-track');
+    if (!t || el.parentNode !== t) return;
+    var left = el.offsetLeft, right = left + el.offsetWidth;
+    // The track is padded 24px on the left and 90px on the right, so a card lines up with the page margins.
+    if (el.id === 'ex-0') t.scrollLeft = 0;
+    else if (left - 24 < t.scrollLeft) t.scrollLeft = left - 24;
+    else if (right + 90 > t.scrollLeft + t.clientWidth) t.scrollLeft = right + 90 - t.clientWidth;
   }
   // Down and Up move a long menu by most of a screen. Returns true when it scrolled.
   function scrollMenu(dir) {
@@ -415,6 +435,7 @@
     // Dining: moving onto a menu shows it; moving through the items keeps the focused one in view.
     if (state.screen === 'dining' && !state.staff) {
       if (el.getAttribute('data-act') === 'menu' && el.getAttribute('data-arg') !== state.menu) { state.menu = el.getAttribute('data-arg'); render('dining', el.id); return; }
+      if (el.getAttribute('data-act') === 'exp') scrollCards(el);
       moreCue();
     }
   }
@@ -430,7 +451,16 @@
         if (dir === 'left') { for (var q = 0; q < C.dining.length; q++) if (C.dining[q].key === state.menu) { focus(document.getElementById('menu-' + q)); return true; } }
         return true;
       }
-      if (dir === 'right' && focused.getAttribute('data-act') === 'menu') { if (lst && /focusable/.test(lst.className)) focus(lst); return true; }
+      if (dir === 'right' && focused.getAttribute('data-act') === 'menu') {
+        var ex0 = document.getElementById('ex-0');
+        if (ex0) focus(ex0); else if (lst && /focusable/.test(lst.className)) focus(lst);
+        return true;
+      }
+      if (focused.getAttribute('data-act') === 'exp') {
+        if (dir === 'up' || dir === 'down') return true;
+        if (dir === 'left' && focused.id === 'ex-0') { for (var q2 = 0; q2 < C.dining.length; q2++) if (C.dining[q2].key === state.menu) { focus(document.getElementById('menu-' + q2)); return true; } }
+        if (dir === 'right' || dir === 'left') { var nx = document.getElementById('ex-' + (+focused.id.slice(3) + (dir === 'right' ? 1 : -1))); if (nx) focus(nx); return true; }
+      }
     }
     var from = focused.getBoundingClientRect(), a = centre(from);
     var els = scope().querySelectorAll('.focusable'), best = null, bestScore = Infinity;
@@ -472,7 +502,7 @@
       if (!pl.spotify) { toast(pl.name + ' is coming soon.'); return; }
       Platform.openSpotify(findApp('spotify'), pl.spotify, function (ok, why) { if (!ok) toast('Spotify couldn’t open (' + (why || 'unknown') + ')'); });
     }
-    else if (act === 'menu') { var l = document.getElementById('menu-list'); if (l && /focusable/.test(l.className)) focus(l); }
+    else if (act === 'menu') { var l = document.getElementById('ex-0') || document.getElementById('menu-list'); if (l && (l.id === 'ex-0' || /focusable/.test(l.className))) focus(l); }
     else if (act === 'pin') pinKey(arg);
     else if (act === 'staff') staffAction(arg);
   }
