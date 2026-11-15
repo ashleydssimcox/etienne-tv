@@ -346,9 +346,11 @@
   // Experiences as picture cards in a row, browsed with Left / Right. The photo is the item's image_url in the
   // Menu Manager; a path such as /img/x.jpg is served from ops.theetienne.com. With no photo the card shows its section.
   function expImage(u) { return !u ? '' : /^https?:/.test(u) ? u : 'https://ops.theetienne.com' + (u.charAt(0) === '/' ? '' : '/') + u; }
+  // Photos in web/img are served from GitHub Pages alongside app.js.
+  function photoUrl(p) { return !p ? '' : /^https?:/.test(p) ? p : C.assetBase + p; }
   function stockPhoto(label) {
     var secs = findMenu('experiences').sections;
-    for (var i = 0; i < secs.length; i++) if (secs[i][1] === label) return (C.experiencePhotos || {})[secs[i][0]] || '';
+    for (var i = 0; i < secs.length; i++) if (secs[i][1] === label) return photoUrl((C.experiencePhotos || {})[secs[i][0]]);
     return '';
   }
   function expCards(groups) {

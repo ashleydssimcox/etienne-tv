@@ -3,6 +3,8 @@ var ETIENNE_CONFIG = {
   // The welcome name comes from the current reservation in ops.theetienne.com
   // (Supabase function get_tv_greeting). This key is the public "publishable" key, safe to ship.
   supabaseUrl: 'https://cxryccvdunfmhyhlrfyf.supabase.co',
+  // Where the page's own files (and the photos in web/img) are served from.
+  assetBase: 'https://ashleydssimcox.github.io/etienne-tv/web/',
   supabaseKey: 'sb_publishable_ZWA3j-rd5XZrBbU5BbpeSg_3T0ck-f7',
 
   // This TV's name, as guests see it in AirPlay and Chromecast lists.
@@ -105,23 +107,24 @@ var ETIENNE_CONFIG = {
   menuTaxNote: 'All prices are in Thai Baht (฿) and are subject to 10% service charge and 7% VAT',
 
   // Experience cards use the item's own photo from the Menu Manager (image_url). Until one is added, the card
-  // shows the stock photo for its section. Free Unsplash photos (unsplash.com/license), loaded straight from Unsplash.
+  // shows the stock photo for its section, kept in web/img and served from GitHub Pages with the rest of the page.
+  // Free Unsplash photos (unsplash.com/license), downloaded by .github/workflows/fetch-photos.yml.
   experiencePhotos: {
-    dining: 'https://images.unsplash.com/photo-1695641738244-25e5355e9a42?fm=jpg&q=70&w=800&fit=crop',      // candlelit table, Benjamin Brunner
-    wellness: 'https://images.unsplash.com/photo-1650044252595-cacd425982ff?fm=jpg&q=70&w=800&fit=crop',    // massage, unsplash.com/photos/UNRW1dD2xjI
-    water: 'https://images.unsplash.com/photo-1740688244365-e339951acc16?fm=jpg&q=70&w=800&fit=crop',       // speedboat off a Thai island, Jim Thirion
-    transfers: 'https://images.unsplash.com/photo-1471174617910-3e9c04f58ff5?fm=jpg&q=70&w=800&fit=crop'    // Mercedes interior, unsplash.com/photos/ovrOPhu8vSw
+    dining: 'img/exp-dining.jpg',        // candlelit table, Benjamin Brunner
+    wellness: 'img/exp-wellness.jpg',    // massage, unsplash.com/photos/UNRW1dD2xjI
+    water: 'img/exp-water.jpg',          // speedboat off a Thai island, Jim Thirion
+    transfers: 'img/exp-transfers.jpg'   // Mercedes interior, unsplash.com/photos/ovrOPhu8vSw
   },
 
   dining: [
     { key: 'minibar', name: 'Mini Bar', eyebrow: 'In your room', url: 'https://order.theetienne.com/minibar', qrLabel: 'Scan to view',
-      description: 'A considered selection of refreshments is available in your room and replenished daily for your comfort.',
+      description: 'Refreshments in your room, replenished daily for your comfort.',
       sections: [['softs', 'Drinks'], ['snacks', 'Snacks']] },
     { key: 'wine', name: 'The Cellar', eyebrow: 'Wines, spirits & beer', url: 'https://order.theetienne.com/thecellar', qrLabel: 'Scan to order',
-      description: 'A curated selection of wines, spirits and beers, complemented by mixers and soft drinks.',
+      description: 'A curated selection of wines, spirits and beers, with mixers.',
       sections: [['wine', 'Wine'], ['spirits', 'Spirits'], ['aperitif', 'Aperitifs'], ['beer', 'Beer'], ['softs', 'Soft Drinks & Mixers']] },
     { key: 'experiences', name: 'Experiences', eyebrow: 'Discover Koh Samui', url: 'https://order.theetienne.com/experiences', qrLabel: 'Scan to reserve',
-      description: 'Private experiences throughout your stay, from dining and wellness to days on the water.',
+      description: 'Private dining, wellness and days on the water, arranged for you.',
       sections: [['dining', 'Dining'], ['wellness', 'Wellness'], ['water', 'On the Water'], ['transfers', 'Transfers']] }
   ],
 
