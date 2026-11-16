@@ -9,10 +9,16 @@ Check each item on the first Sony (Google TV) before the villa opens.
 - [ ] "Exit to the TV menu" in the staff menu works with the PIN
 
 ## Apps and music
-- [ ] Each Music playlist opens in Spotify on the right playlist
+- [ ] Each Music playlist plays on the page from the villa's own tracks (no Spotify)
+- [ ] Business music licence for playing music to guests checked
 - [ ] Netflix, YouTube, Disney+, Prime Video, Max and Spotify open from Streaming
 - [ ] Pressing Home inside an app returns to The Étienne
 - [ ] "Reset for next guest" signs guests out of the streaming apps
+
+## Dining and Villa Guide
+- [ ] Villa Guide on the TV matches the current Guest Guide wording
+- [ ] Concierge WhatsApp number, check-in / check-out times and Wi-Fi details correct in the guide
+- [ ] Each experience has its own photo (or a suitable stock photo)
 
 ## Live TV
 - [ ] The TV's own tuner channels show and play
